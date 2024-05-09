@@ -6,6 +6,12 @@ from django.contrib.auth.views import LoginView
 urlpatterns = [
     path('', views.main, name='main'),
 
+    path('usuarios/', views.lista_usuarios.as_view(), name='lista_usuarios'),
+    path('usuarios/usuarioNuevo', views.nuevo_usuario, name='nuevo_usuario'),
+    path('usuarios/usuarioModif/<int:pk>/', views.modif_usuario.as_view(), name='modif_usuario'),
+    path('usuarios/usuarioBorrar/<int:pk>/', views.borrar_usuario.as_view(), name='borrar_usuario'),
+    path('usuarios/<int:usuario_id>/', views.detalle_usuario, name='detalle_usuario'),
+
     path('encargados/', views.lista_encargados.as_view(), name='lista_encargados'),
     path('encargados/<int:encargado_id>/', views.detalle_encargado, name='detalle_encargado'),
     path('encargados/encargadoNuevo/', views.nuevo_encargado.as_view(), name='nuevo_encargado'),

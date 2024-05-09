@@ -1,8 +1,8 @@
 from typing import Any
 from django.db.models.query import QuerySet
 from django.shortcuts import render, HttpResponseRedirect, reverse, redirect
-from .models import Reserva, Cliente, ClienteNet, Categoria, Proveedor, Encargado, Complejo, Cabania, Servicio, ReservaServicio
-from .forms import formCabania, formEncargado, formCliente, formClienteNet, formProveedor, formCategoria, formComplejo, formServicio, formReserva, formReservaServicio
+from .models import Reserva, Cliente, ClienteNet, Categoria, Proveedor, Encargado, Usuario, Complejo, Cabania, Servicio, ReservaServicio
+from .forms import formCabania, formEncargado,formUsuario, formCliente, formClienteNet, formProveedor, formCategoria, formComplejo, formServicio, formReserva, formReservaServicio
 from django.views.generic import  CreateView, UpdateView, DeleteView, ListView
 from django.urls import reverse_lazy
 from django.db.models import Q
@@ -36,6 +36,7 @@ def main(request):
     clientesNet = ClienteNet.objects.all()
     categoria = Categoria.objects.all()
     proveedores = Proveedor.objects.all()
+    usuario = Usuario.objects.all()
 
     context = {'reservas': reservas,
                'clientes': clientes,
@@ -46,7 +47,9 @@ def main(request):
                'reservaServicio':reservaServicio,
                'clientesNet': clientesNet,
                'categoria': categoria,
-               'proveedores': proveedores}
+               'proveedores': proveedores,
+               'usuario': usuario,
+               }
     
     return render(request, 'main.html', context)
 
@@ -300,6 +303,101 @@ def detalle_servicio(request, servicio_id):
         'servicio': servicio
     } 
     return render(request, 'detalle_servicio.html', context)
+
+def detalle_usuario(request, usuario_id):
+    """
+    Vista que muestra los detalles de un usuario específico identificado por su ID.
+
+    Recupera y muestra los detalles de un usuario, identificado por el parámetro usuario_id, 
+    incluyendo todos los atributos disponibles del usuario.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        usuario_id (int): El ID del usuario del cual se mostrarán los detalles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'detalle_encargado.html' con el contexto que contiene los detalles del usuario.
+    
+    Raises:
+        Usuario.DoesNotExist: Si el usuario con el ID proporcionado no existe en la base de datos.
+    """
+    usuario = Usuario.objects.get(id=usuario_id)
+
+    context={
+        'usuario': usuario
+    }
+    return render(request,'Usuario/detalle_usuario.html', context)
+
+#VISTAS USUARIO
+
+class lista_usuarios(LoginRequiredMixin, ListView):
+    """
+    Vista basada en clase que muestra una lista paginada de usuarios.
+
+    Permite filtrar la lista de usuarios por nombre/apellido o número de DNI.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Usuario): Modelo utilizado para obtener los datos de la lista.
+        template_name (str): Nombre de la plantilla utilizada para renderizar la vista.
+        context_object_name (str): Nombre del objeto de contexto utilizado en la plantilla.
+        paginate_by (int): Número de elementos por página para la paginación.
+    """
+    login_url = '/login/'
+    model = Usuario
+    template_name = 'Usuario/lista_usuarios.html'
+    context_object_name = 'usuarios'
+    paginate_by = 10
+
+    def get_queryset(self):
+        """
+        Obtiene la lista de usuarios filtrada según el parámetro de búsqueda.
+
+        Returns:
+            QuerySet: Lista filtrada de usuarios según la consulta de búsqueda.
+        """
+        query = self.request.GET.get('q','')
+
+        usuarios = Usuario.objects.filter(
+            Q(apeynombre__icontains=query)
+        )
+        
+        return usuarios
+
+def nuevo_usuario(request):
+
+    if request.method == 'POST':
+        form = formUsuario(request.POST)
+        if form.is_valid():
+            form.save()
+    else:
+        form = formUsuario()
+    return render(request, 'Usuario/form_usuario.html', {'form': form})
+
+class modif_usuario(LoginRequiredMixin, UpdateView):
+    """
+    Vista basada en clase para modificar un usuario existente.
+
+    Permite a los usuarios modificar un usuario existente proporcionando un formulario predefinido.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Usuario): Modelo utilizado para modificar la instancia de usuario existente.
+        form_class (formUsuario): Formulario utilizado para la modificación del usuario.
+        template_name (str): Nombre de la plantilla utilizada para renderizar el formulario.
+        success_url (str): URL a la que se redirige después de que se modifica el usuario con éxito.
+    """
+    login_url = '/login/'
+    model = Usuario
+    form_class = formUsuario
+    template_name = 'Usuario/form_usuario.html'
+    success_url = reverse_lazy('lista_usuarios')
+
+class borrar_usuario(LoginRequiredMixin,DeleteView):
+    login_url = '/login/'
+    model = Usuario
+    template_name = 'Usuario/conf_borrar_usuario.html'
+    success_url = reverse_lazy('lista_usuarios')
 
 #VISTAS ENCARGADO
 

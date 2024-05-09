@@ -1,5 +1,21 @@
 from django import forms
-from .models import Cabania, Encargado, Cliente, Categoria, ClienteNet, Complejo, Reserva, Servicio, ReservaServicio, Proveedor
+from .models import Cabania, Encargado, Cliente, Categoria, ClienteNet, Complejo, Reserva, Servicio, ReservaServicio, Proveedor, Usuario
+
+class formUsuario(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = ('nombre_usuario', 'apeynombre', 'contrasenia', 'repeat_contrasenia', 'telefono', 'email', 'dni', 'locales', 'roles')
+        widgets = {
+            'nombre_usuario': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su Nombre de Usuario'}),
+            'apeynombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su Nombre y Apellido'}),
+            'contrasenia': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su Contraseña'}),
+            'repeat_contrasenia': forms.PasswordInput(attrs={'class': 'form-control' , 'placeholder': 'Repita su contraseña'}),
+            'telefono': forms.NumberInput(attrs={'class': 'form-control' , 'placeholder': 'Ingrese su Número Telefónico'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su e-mail'}),
+            'dni': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su DNI'}),
+            'locales': forms.Select(attrs={'class': 'form-select'}),
+            'roles': forms.Select(attrs={'class': 'form-select'})
+        }
 
 class formCabania(forms.ModelForm):
     class Meta:

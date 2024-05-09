@@ -12,11 +12,13 @@ urlpatterns = [
     path('usuarios/usuarioBorrar/<int:pk>/', views.borrar_usuario.as_view(), name='borrar_usuario'),
     path('usuarios/<int:usuario_id>/', views.detalle_usuario, name='detalle_usuario'),
 
-    path('encargados/', views.lista_encargados.as_view(), name='lista_encargados'),
-    path('encargados/<int:encargado_id>/', views.detalle_encargado, name='detalle_encargado'),
-    path('encargados/encargadoNuevo/', views.nuevo_encargado.as_view(), name='nuevo_encargado'),
-    path('encargados/encargadoModif/<int:pk>/', views.modif_encargado.as_view(), name='modif_encargado'),
-    path('encargados/encargadoBorrar/<int:pk>/', views.borrar_encargado.as_view(), name='borrar_encargado'),
+#-----PROYECTO NETCELL--------------------------------------------------------
+
+    path('clientesNet/', views.lista_clientesNet.as_view(), name='lista_clientesNet'),
+    path('clientesNet/<int:clienteNet_id>/', views.detalle_clienteNet, name='detalle_clienteNet'),
+    path('clientesNet/clienteNetNuevo/', views.nuevo_clienteNet.as_view(), name='nuevo_clienteNet'),
+    path('clientesNet/clienteNetModif/<int:pk>/', views.modif_clienteNet.as_view(), name='modif_clienteNet'),
+    path('clientesNet/clienteNetBorrar/<int:pk>/', views.borrar_clienteNet.as_view(), name='borrar_clienteNet'),    
 
     path('proveedores/', views.lista_proveedores.as_view(), name='lista_proveedores'),
     path('proveedores/<int:proveedor_id>/', views.detalle_proveedor, name='detalle_proveedor'),
@@ -30,11 +32,13 @@ urlpatterns = [
     path('categoria/categoriaModif/<int:pk>/', views.modif_categoria.as_view(), name='modif_categoria'),
     path('categoria/categoriaBorrar/<int:pk>/', views.borrar_categoria.as_view(), name='borrar_categoria'),
 
-    path('clientesNet/', views.lista_clientesNet.as_view(), name='lista_clientesNet'),
-    path('clientesNet/<int:clienteNet_id>/', views.detalle_clienteNet, name='detalle_clienteNet'),
-    path('clientesNet/clienteNetNuevo/', views.nuevo_clienteNet.as_view(), name='nuevo_clienteNet'),
-    path('clientesNet/clienteNetModif/<int:pk>/', views.modif_clienteNet.as_view(), name='modif_clienteNet'),
-    path('clientesNet/clienteNetBorrar/<int:pk>/', views.borrar_clienteNet.as_view(), name='borrar_clienteNet'),
+#-----PROYECTO RESERVAS--------------------------------------------------------
+
+    path('encargados/', views.lista_encargados.as_view(), name='lista_encargados'),
+    path('encargados/<int:encargado_id>/', views.detalle_encargado, name='detalle_encargado'),
+    path('encargados/encargadoNuevo/', views.nuevo_encargado.as_view(), name='nuevo_encargado'),
+    path('encargados/encargadoModif/<int:pk>/', views.modif_encargado.as_view(), name='modif_encargado'),
+    path('encargados/encargadoBorrar/<int:pk>/', views.borrar_encargado.as_view(), name='borrar_encargado'),    
 
     path('clientes/', views.lista_clientes.as_view(), name='lista_clientes'),
     path('clientes/<int:cliente_id>/', views.detalle_cliente, name='detalle_cliente'),

@@ -53,6 +53,8 @@ def main(request):
     
     return render(request, 'main.html', context)
 
+#-----PROYECTO NETCELL--------------------------------------------------------
+
 def detalle_proveedor(request, proveedor_id):
     """
     Vista que muestra los detalles de un cliente específico identificado por su ID.
@@ -125,6 +127,8 @@ def detalle_clienteNet(request, clienteNet_id):
     }
     return render(request, 'ClienteNet/detalle_clienteNet.html', context)
 
+#-----PROYECTO RESERVAS--------------------------------------------------------
+
 def detalle_cliente(request, cliente_id):
     """
     Vista que muestra los detalles de un cliente específico identificado por su ID.
@@ -147,7 +151,7 @@ def detalle_cliente(request, cliente_id):
     context = {
         'cliente': cliente
     }
-    return render(request, 'detalle_cliente.html', context)
+    return render(request, 'SinUso/detalle_cliente.html', context)
 
 
 def detalle_encargado(request, encargado_id):
@@ -172,7 +176,7 @@ def detalle_encargado(request, encargado_id):
     context={
         'encargado': encargado
     }
-    return render(request,'detalle_encargado.html', context)
+    return render(request,'SinUso/detalle_encargado.html', context)
 
 
 def detalle_complejo(request, complejo_id):
@@ -197,7 +201,7 @@ def detalle_complejo(request, complejo_id):
     context = {
         'complejo': complejo
     }
-    return render(request, 'detalle_complejo.html', context)
+    return render(request, 'SinUso/detalle_complejo.html', context)
 
 
 def detalle_cabania(request, cabania_id):
@@ -222,7 +226,7 @@ def detalle_cabania(request, cabania_id):
     context = {
         'cabania': cabania
     }
-    return render(request, 'detalle_cabania.html', context)
+    return render(request, 'SinUso/detalle_cabania.html', context)
 
 def detalle_reserva(request, reserva_id):
     """
@@ -274,7 +278,7 @@ def detalle_reserva(request, reserva_id):
             'total_servicios': total_servicios
         }
 
-    return render(request, 'detalle_reserva.html', context)
+    return render(request, 'SinUso/detalle_reserva.html', context)
 
 def obtener_cabanias(request, complejo_id):
     cabanias = Cabania.objects.filter(complejo_id=complejo_id).values_list('id','nombre')
@@ -303,101 +307,6 @@ def detalle_servicio(request, servicio_id):
         'servicio': servicio
     } 
     return render(request, 'detalle_servicio.html', context)
-
-def detalle_usuario(request, usuario_id):
-    """
-    Vista que muestra los detalles de un usuario específico identificado por su ID.
-
-    Recupera y muestra los detalles de un usuario, identificado por el parámetro usuario_id, 
-    incluyendo todos los atributos disponibles del usuario.
-
-    Args:
-        request (HttpRequest): La solicitud HTTP recibida.
-        usuario_id (int): El ID del usuario del cual se mostrarán los detalles.
-
-    Returns:
-        HttpResponse: Renderiza la plantilla 'detalle_encargado.html' con el contexto que contiene los detalles del usuario.
-    
-    Raises:
-        Usuario.DoesNotExist: Si el usuario con el ID proporcionado no existe en la base de datos.
-    """
-    usuario = Usuario.objects.get(id=usuario_id)
-
-    context={
-        'usuario': usuario
-    }
-    return render(request,'Usuario/detalle_usuario.html', context)
-
-#VISTAS USUARIO
-
-class lista_usuarios(LoginRequiredMixin, ListView):
-    """
-    Vista basada en clase que muestra una lista paginada de usuarios.
-
-    Permite filtrar la lista de usuarios por nombre/apellido o número de DNI.
-
-    Attributes:
-        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
-        model (Usuario): Modelo utilizado para obtener los datos de la lista.
-        template_name (str): Nombre de la plantilla utilizada para renderizar la vista.
-        context_object_name (str): Nombre del objeto de contexto utilizado en la plantilla.
-        paginate_by (int): Número de elementos por página para la paginación.
-    """
-    login_url = '/login/'
-    model = Usuario
-    template_name = 'Usuario/lista_usuarios.html'
-    context_object_name = 'usuarios'
-    paginate_by = 10
-
-    def get_queryset(self):
-        """
-        Obtiene la lista de usuarios filtrada según el parámetro de búsqueda.
-
-        Returns:
-            QuerySet: Lista filtrada de usuarios según la consulta de búsqueda.
-        """
-        query = self.request.GET.get('q','')
-
-        usuarios = Usuario.objects.filter(
-            Q(apeynombre__icontains=query)
-        )
-        
-        return usuarios
-
-def nuevo_usuario(request):
-
-    if request.method == 'POST':
-        form = formUsuario(request.POST)
-        if form.is_valid():
-            form.save()
-    else:
-        form = formUsuario()
-    return render(request, 'Usuario/form_usuario.html', {'form': form})
-
-class modif_usuario(LoginRequiredMixin, UpdateView):
-    """
-    Vista basada en clase para modificar un usuario existente.
-
-    Permite a los usuarios modificar un usuario existente proporcionando un formulario predefinido.
-
-    Attributes:
-        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
-        model (Usuario): Modelo utilizado para modificar la instancia de usuario existente.
-        form_class (formUsuario): Formulario utilizado para la modificación del usuario.
-        template_name (str): Nombre de la plantilla utilizada para renderizar el formulario.
-        success_url (str): URL a la que se redirige después de que se modifica el usuario con éxito.
-    """
-    login_url = '/login/'
-    model = Usuario
-    form_class = formUsuario
-    template_name = 'Usuario/form_usuario.html'
-    success_url = reverse_lazy('lista_usuarios')
-
-class borrar_usuario(LoginRequiredMixin,DeleteView):
-    login_url = '/login/'
-    model = Usuario
-    template_name = 'Usuario/conf_borrar_usuario.html'
-    success_url = reverse_lazy('lista_usuarios')
 
 #VISTAS ENCARGADO
 
@@ -683,12 +592,142 @@ class borrar_clienteNet(LoginRequiredMixin, DeleteView):
     template_name = 'ClienteNet/conf_borrar_clienteNet.html'
     success_url = reverse_lazy('lista_clientesNet')
   
+#-----PROYECTO RESERVAS--------------------------------------------------------
+
+#VISTAS ENCARGADO
+
+class lista_encargados(LoginRequiredMixin, ListView):
+    """
+    Vista basada en clase que muestra una lista paginada de encargados.
+
+    Permite filtrar la lista de encargados por nombre/apellido o número de DNI.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Encargado): Modelo utilizado para obtener los datos de la lista.
+        template_name (str): Nombre de la plantilla utilizada para renderizar la vista.
+        context_object_name (str): Nombre del objeto de contexto utilizado en la plantilla.
+        paginate_by (int): Número de elementos por página para la paginación.
+    """
+    login_url = '/login/'
+    model = Encargado
+    template_name = 'SinUso/lista_encargados.html'
+    context_object_name = 'encargados'
+    paginate_by = 10
+
+    def get_queryset(self):
+        """
+        Obtiene la lista de encargados filtrada según el parámetro de búsqueda.
+
+        Returns:
+            QuerySet: Lista filtrada de encargados según la consulta de búsqueda.
+        """
+        query = self.request.GET.get('q','')
+        encargados = Encargado.objects.filter(
+            Q(apellido_nombre__icontains=query) |
+            Q(dni__icontains=query)
+        )
+        return encargados
+
+class nuevo_encargado(LoginRequiredMixin, CreateView):
+    """
+    Vista basada en clase para crear un nuevo encargado.
+
+    Permite a los usuarios crear un nuevo encargado proporcionando un formulario predefinido.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Encargado): Modelo utilizado para crear una nueva instancia de encargado.
+        form_class (formEncargado): Formulario utilizado para la creación del encargado.
+        template_name (str): Nombre de la plantilla utilizada para renderizar el formulario.
+        success_url (str): URL a la que se redirige después de que se crea un nuevo encargado con éxito.
+    """
+    login_url = '/login/'
+    model = Encargado
+    form_class = formEncargado
+    template_name = 'SinUso/form_encargado.html'
+    success_url = reverse_lazy('lista_encargados')
+
+class modif_encargado(LoginRequiredMixin, UpdateView):
+    """
+    Vista basada en clase para modificar un encargado existente.
+
+    Permite a los usuarios modificar un encargado existente proporcionando un formulario predefinido.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Encargado): Modelo utilizado para modificar la instancia de encargado existente.
+        form_class (formEncargado): Formulario utilizado para la modificación del encargado.
+        template_name (str): Nombre de la plantilla utilizada para renderizar el formulario.
+        success_url (str): URL a la que se redirige después de que se modifica el encargado con éxito.
+    """
+    login_url = '/login/'
+    model = Encargado
+    form_class = formEncargado
+    template_name = 'SinUso/form_encargado.html'
+    success_url = reverse_lazy('lista_encargados')
+
+class borrar_encargado(LoginRequiredMixin,DeleteView):
+    login_url = '/login/'
+    model = Encargado
+    template_name = 'SinUso/conf_borrar_encargado.html'
+    success_url = reverse_lazy('lista_encargados')
+
+#VISTAS DE CABAÑAS
+
+class lista_cabanias(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    model = Cabania
+    template_name = 'SinUso/lista_cabanias.html'
+    context_object_name = 'cabanias'
+    paginate_by = 10
+
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')
+        cabanias = Cabania.objects.filter(
+            Q(nombre__contains = query) |
+            Q(tipo__icontains = query)
+        )
+
+        return cabanias
+
+class nuevo_cabania(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    model = Cabania
+    form_class = formCabania
+    template_name = 'SinUso/form_cabania.html'
+    success_url = reverse_lazy('lista_cabanias')
+
+class modif_cabania(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    model = Cabania
+    form_class = formCabania
+    template_name = 'SinUso/form_cabania.html'
+    success_url = reverse_lazy('lista_cabanias')
+
+class borrar_cabania(LoginRequiredMixin, DeleteView):
+    """
+    Vista basada en clase para eliminar un encargado existente.
+
+    Permite a los usuarios eliminar un encargado existente utilizando una confirmación.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Encargado): Modelo utilizado para eliminar la instancia de encargado existente.
+        template_name (str): Nombre de la plantilla utilizada para confirmar la eliminación del encargado.
+        success_url (str): URL a la que se redirige después de eliminar con éxito el encargado.
+    """
+    login_url = '/login/'
+    model = Cabania
+    template_name = 'SinUso/conf_borrar_cabania.html'
+    success_url = reverse_lazy('lista_cabanias')
+
 #VISTAS DE CLIENTES
 
 class lista_clientes(LoginRequiredMixin, ListView):
     login_url = '/login/'
     model = Cliente
-    template_name = 'lista_clientes.html'
+    template_name = 'SinUso/lista_clientes.html'
     context_object_name = 'clientes'
     paginate_by = 10
 
@@ -706,7 +745,7 @@ class nuevo_cliente(LoginRequiredMixin, CreateView):
     login_url = '/login/'
     model = Cliente
     form_class = formCliente
-    template_name = 'form_cliente.html'
+    template_name = 'SinUso/form_cliente.html'
     #success_url = reverse_lazy('lista_clientes')
 
     def form_valid(self, form):
@@ -726,20 +765,20 @@ class modif_cliente(LoginRequiredMixin, UpdateView):
     login_url = '/login/'
     model = Cliente
     form_class = formCliente
-    template_name = 'form_cliente.html'
+    template_name = 'SinUso/form_cliente.html'
     success_url = reverse_lazy('lista_clientes')
 
 class borrar_cliente(LoginRequiredMixin, DeleteView):
     login_url = '/login/'
     model = Cliente
-    template_name = 'conf_borrar_cliente.html'
+    template_name = 'SinUso/conf_borrar_cliente.html'
     success_url = reverse_lazy('lista_clientes')
   
 #VISTAS DE COMPLEJO
 class lista_complejos(LoginRequiredMixin, ListView):
     login_url = '/login/'
     model = Complejo
-    template_name = 'lista_complejos.html'
+    template_name = 'SinUso/lista_complejos.html'
     context_object_name = 'complejos'
     paginate_by = 10
 
@@ -755,27 +794,27 @@ class nuevo_complejo(LoginRequiredMixin, CreateView):
     login_url = '/login/'
     model = Complejo
     form_class = formComplejo
-    template_name = 'form_complejo.html'
+    template_name = 'SinUso/form_complejo.html'
     success_url = reverse_lazy('lista_complejos')
 
 class modif_complejo(LoginRequiredMixin, UpdateView):
     login_url = '/login/'
     model = Complejo
     form_class = formComplejo
-    template_name = 'form_complejo.html'
+    template_name = 'SinUso/form_complejo.html'
     success_url = reverse_lazy('lista_complejos')
 
 class borrar_complejo(LoginRequiredMixin, DeleteView):
     login_url = '/login/'
     model = Complejo
-    template_name = 'conf_borrar_complejo.html'
+    template_name = 'SinUso/conf_borrar_complejo.html'
     success_url = reverse_lazy('lista_complejos')
     
 #VISTAS DE SERVICIOS
 class lista_servicios(LoginRequiredMixin, ListView):
     login_url = '/login/'
     model = Servicio
-    template_name = 'lista_servicios.html'
+    template_name = 'SinUso/lista_servicios.html'
     context_object_name = 'servicios'
     paginate_by = 10
 
@@ -791,27 +830,27 @@ class nuevo_servicio(LoginRequiredMixin, CreateView):
     login_url = '/login/'
     model = Servicio
     form_class = formServicio
-    template_name = 'form_servicio.html'
+    template_name = 'SinUso/form_servicio.html'
     success_url = reverse_lazy('lista_servicios')
 
 class modif_servicio(LoginRequiredMixin, UpdateView):
     login_url = '/login/'
     model = Servicio
     form_class = formServicio
-    template_name = 'form_servicio.html'
+    template_name = 'SinUso/form_servicio.html'
     success_url = reverse_lazy('lista_servicios')
 
 class borrar_servicio(LoginRequiredMixin, DeleteView):
     login_url = '/login/'
     model = Servicio
-    template_name = 'conf_borrar_servicio.html'
+    template_name = 'SinUso/conf_borrar_servicio.html'
     success_url = reverse_lazy('lista_servicios')
     
 #VISTAS DE RESERVAS
 class lista_reservas(LoginRequiredMixin, ListView):
     login_url = '/login/'
     model = Reserva
-    template_name = 'lista_reservas.html'
+    template_name = 'SinUso/lista_reservas.html'
     context_object_name = 'reservas'
     paginate_by = 10
 
@@ -862,7 +901,7 @@ class nuevo_reserva(LoginRequiredMixin, CreateView):
     login_url = '/login/'
     model = Reserva
     form_class = formReserva
-    template_name = 'form_reserva.html'
+    template_name = 'SinUso/form_reserva.html'
     success_url = reverse_lazy('lista_reservas')
 
     def get_context_data(self, **kwargs):
@@ -988,7 +1027,7 @@ class modif_reserva(LoginRequiredMixin, UpdateView):
     login_url = '/login/'
     model = Reserva
     form_class = formReserva
-    template_name = 'form_reserva.html'
+    template_name = 'SinUso/form_reserva.html'
     success_url = reverse_lazy('lista_reservas')
 
     def get_initial(self):
@@ -1105,19 +1144,19 @@ class modif_reserva(LoginRequiredMixin, UpdateView):
 
 class borrar_reserva(LoginRequiredMixin, DeleteView):
     model = Reserva
-    template_name = 'conf_borrar_reserva.html'
+    template_name = 'SinUso/conf_borrar_reserva.html'
     success_url = reverse_lazy('lista_reservas')
 
 
 def disponibilidad_cabania(request, cabania_id):
     reservas = Reserva.objects.filter(cabania_id=cabania_id)
 
-    return render(request, 'disponibilidad_cabania.html',{'reservas': reservas})
+    return render(request, 'SinUso/disponibilidad_cabania.html',{'reservas': reservas})
 
 def disponibilidad_complejo(request, complejo_id):
     reservas = Reserva.objects.filter(complejo_id=complejo_id)
 
-    return render(request, 'disponibilidad_complejo.html',{'reservas': reservas})
+    return render(request, 'SinUso/disponibilidad_complejo.html',{'reservas': reservas})
 
 def cabanias_disponibles(request):
     if request.method == 'POST':
@@ -1137,13 +1176,13 @@ def cabanias_disponibles(request):
                 ).values('cabania_id'))
             )
 
-            return render(request, 'lista_disponibilidad.html', {'cabañas_disponibles': cabañas_disponibles,
+            return render(request, 'SinUso/lista_disponibilidad.html', {'cabañas_disponibles': cabañas_disponibles,
                                                                   'fecha_entrada': fecha_entrada,
                                                                   'fecha_salida': fecha_salida})
 
     # Si las fechas están vacías o si el método de solicitud no es POST,
     # simplemente renderiza el formulario nuevamente
-    return render(request, 'lista_disponibilidad.html')
+    return render(request, 'SinUso/lista_disponibilidad.html')
 '''
 class DetalleReservaServicio(LoginRequiredMixin, ListView):
     model = ReservaServicio

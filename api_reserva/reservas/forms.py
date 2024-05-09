@@ -17,29 +17,7 @@ class formUsuario(forms.ModelForm):
             'roles': forms.Select(attrs={'class': 'form-select'})
         }
 
-class formCabania(forms.ModelForm):
-    class Meta:
-        model = Cabania
-        fields = ('nombre', 'tipo', 'capacidad', 'precio', 'complejo')
-        widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-            'tipo': forms.Select(attrs={'class': 'form-select'}),
-            'capacidad': forms.NumberInput(attrs={'class': 'form-control'}),
-            'precio': forms.NumberInput(attrs={'class': 'form-control'}),
-            'complejo': forms.Select(attrs={'class': 'form-select'}),
-        }
-
-
-class formEncargado(forms.ModelForm):
-    class Meta:
-        model = Encargado
-        fields = ('apellido_nombre','dni', 'telefono', 'email')
-        widgets = {
-            'apellido_nombre': forms.TextInput(attrs={'class': 'form-control' , 'placeholder': 'Ingrese su Nombre y Apellido'}),
-            'dni': forms.NumberInput(attrs={'class': 'form-control' , 'placeholder': 'ingrese su DNI'} ),
-            'telefono': forms.NumberInput(attrs={'class': 'form-control' , 'placeholder': 'Ingrese su Número Telefónico'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control' , 'placeholder': 'Ingrese su Correo Electrónico'}),
-        }
+#-----PROYECTO NETCELL--------------------------------------------------------
 
 class formProveedor(forms.ModelForm):
     class Meta:
@@ -75,6 +53,32 @@ class formClienteNet(forms.ModelForm):
                 'comentarios': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese un Comentario'}),
                 'grupo': forms.Select(attrs={'class': 'form-select'}),
             }
+
+#-----PROYECTO RESERVAS--------------------------------------------------------
+
+class formCabania(forms.ModelForm):
+    class Meta:
+        model = Cabania
+        fields = ('nombre', 'tipo', 'capacidad', 'precio', 'complejo')
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'tipo': forms.Select(attrs={'class': 'form-select'}),
+            'capacidad': forms.NumberInput(attrs={'class': 'form-control'}),
+            'precio': forms.NumberInput(attrs={'class': 'form-control'}),
+            'complejo': forms.Select(attrs={'class': 'form-select'}),
+        }
+
+
+class formEncargado(forms.ModelForm):
+    class Meta:
+        model = Encargado
+        fields = ('apellido_nombre','dni', 'telefono', 'email')
+        widgets = {
+            'apellido_nombre': forms.TextInput(attrs={'class': 'form-control' , 'placeholder': 'Ingrese su Nombre y Apellido'}),
+            'dni': forms.NumberInput(attrs={'class': 'form-control' , 'placeholder': 'ingrese su DNI'} ),
+            'telefono': forms.NumberInput(attrs={'class': 'form-control' , 'placeholder': 'Ingrese su Número Telefónico'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control' , 'placeholder': 'Ingrese su Correo Electrónico'}),
+        }            
 
 class formCliente(forms.ModelForm):
     class Meta:

@@ -1021,12 +1021,12 @@ class borrar_reserva(LoginRequiredMixin, DeleteView):
 def disponibilidad_cabania(request, cabania_id):
     reservas = Reserva.objects.filter(cabania_id=cabania_id)
 
-    return render(request, 'disponibilidad_cabania.html',{'reservas': reservas})
+    return render(request, 'SinUso/disponibilidad_cabania.html',{'reservas': reservas})
 
 def disponibilidad_complejo(request, complejo_id):
     reservas = Reserva.objects.filter(complejo_id=complejo_id)
 
-    return render(request, 'disponibilidad_complejo.html',{'reservas': reservas})
+    return render(request, 'SinUso/disponibilidad_complejo.html',{'reservas': reservas})
 
 def cabanias_disponibles(request):
     if request.method == 'POST':
@@ -1046,13 +1046,13 @@ def cabanias_disponibles(request):
                 ).values('cabania_id'))
             )
 
-            return render(request, 'lista_disponibilidad.html', {'cabañas_disponibles': cabañas_disponibles,
+            return render(request, 'SinUso/lista_disponibilidad.html', {'cabañas_disponibles': cabañas_disponibles,
                                                                   'fecha_entrada': fecha_entrada,
                                                                   'fecha_salida': fecha_salida})
 
     # Si las fechas están vacías o si el método de solicitud no es POST,
     # simplemente renderiza el formulario nuevamente
-    return render(request, 'lista_disponibilidad.html')
+    return render(request, 'SinUso/lista_disponibilidad.html')
 '''
 class DetalleReservaServicio(LoginRequiredMixin, ListView):
     model = ReservaServicio

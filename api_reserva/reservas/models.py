@@ -4,6 +4,8 @@ from datetime import timedelta
 
 # Create your models here.
 
+#-----PROYECTO NETCELL--------------------------------------------------------------------------------------------------------------
+
 class Proveedor(models.Model):
     nombre_empresa = models.CharField(max_length=100)
     dni = models.IntegerField()
@@ -31,6 +33,8 @@ class ClienteNet(models.Model):
 
     def __str__(self):
         return self.nombre_apellido
+
+#----------PROYECTO RESERVAS-------------------------------------------------------------------------------------------------------------------------------------
 
 class Cliente(models.Model):
     dni = models.IntegerField()

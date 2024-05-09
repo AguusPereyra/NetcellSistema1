@@ -50,6 +50,8 @@ def main(request):
     
     return render(request, 'main.html', context)
 
+#-----PROYECTO NETCELL--------------------------------------------------------
+
 def detalle_proveedor(request, proveedor_id):
     """
     Vista que muestra los detalles de un cliente específico identificado por su ID.
@@ -121,6 +123,8 @@ def detalle_clienteNet(request, clienteNet_id):
         'clienteNet': clienteNet
     }
     return render(request, 'ClienteNet/detalle_clienteNet.html', context)
+
+#-----PROYECTO RESERVAS--------------------------------------------------------
 
 def detalle_cliente(request, cliente_id):
     """
@@ -301,134 +305,7 @@ def detalle_servicio(request, servicio_id):
     } 
     return render(request, 'SinUso/detalle_servicio.html', context)
 
-#VISTAS ENCARGADO
-
-class lista_encargados(LoginRequiredMixin, ListView):
-    """
-    Vista basada en clase que muestra una lista paginada de encargados.
-
-    Permite filtrar la lista de encargados por nombre/apellido o número de DNI.
-
-    Attributes:
-        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
-        model (Encargado): Modelo utilizado para obtener los datos de la lista.
-        template_name (str): Nombre de la plantilla utilizada para renderizar la vista.
-        context_object_name (str): Nombre del objeto de contexto utilizado en la plantilla.
-        paginate_by (int): Número de elementos por página para la paginación.
-    """
-    login_url = '/login/'
-    model = Encargado
-    template_name = 'SinUso/lista_encargados.html'
-    context_object_name = 'encargados'
-    paginate_by = 10
-
-    def get_queryset(self):
-        """
-        Obtiene la lista de encargados filtrada según el parámetro de búsqueda.
-
-        Returns:
-            QuerySet: Lista filtrada de encargados según la consulta de búsqueda.
-        """
-        query = self.request.GET.get('q','')
-        encargados = Encargado.objects.filter(
-            Q(apellido_nombre__icontains=query) |
-            Q(dni__icontains=query)
-        )
-        return encargados
-
-class nuevo_encargado(LoginRequiredMixin, CreateView):
-    """
-    Vista basada en clase para crear un nuevo encargado.
-
-    Permite a los usuarios crear un nuevo encargado proporcionando un formulario predefinido.
-
-    Attributes:
-        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
-        model (Encargado): Modelo utilizado para crear una nueva instancia de encargado.
-        form_class (formEncargado): Formulario utilizado para la creación del encargado.
-        template_name (str): Nombre de la plantilla utilizada para renderizar el formulario.
-        success_url (str): URL a la que se redirige después de que se crea un nuevo encargado con éxito.
-    """
-    login_url = '/login/'
-    model = Encargado
-    form_class = formEncargado
-    template_name = 'SinUso/form_encargado.html'
-    success_url = reverse_lazy('lista_encargados')
-
-class modif_encargado(LoginRequiredMixin, UpdateView):
-    """
-    Vista basada en clase para modificar un encargado existente.
-
-    Permite a los usuarios modificar un encargado existente proporcionando un formulario predefinido.
-
-    Attributes:
-        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
-        model (Encargado): Modelo utilizado para modificar la instancia de encargado existente.
-        form_class (formEncargado): Formulario utilizado para la modificación del encargado.
-        template_name (str): Nombre de la plantilla utilizada para renderizar el formulario.
-        success_url (str): URL a la que se redirige después de que se modifica el encargado con éxito.
-    """
-    login_url = '/login/'
-    model = Encargado
-    form_class = formEncargado
-    template_name = 'SinUso/form_encargado.html'
-    success_url = reverse_lazy('lista_encargados')
-
-class borrar_encargado(LoginRequiredMixin,DeleteView):
-    login_url = '/login/'
-    model = Encargado
-    template_name = 'SinUso/conf_borrar_encargado.html'
-    success_url = reverse_lazy('lista_encargados')
-
-#VISTAS DE CABAÑAS
-
-class lista_cabanias(LoginRequiredMixin, ListView):
-    login_url = '/login/'
-    model = Cabania
-    template_name = 'SinUso/lista_cabanias.html'
-    context_object_name = 'cabanias'
-    paginate_by = 10
-
-    def get_queryset(self):
-        query = self.request.GET.get('q', '')
-        cabanias = Cabania.objects.filter(
-            Q(nombre__contains = query) |
-            Q(tipo__icontains = query)
-        )
-
-        return cabanias
-
-class nuevo_cabania(LoginRequiredMixin, CreateView):
-    login_url = '/login/'
-    model = Cabania
-    form_class = formCabania
-    template_name = 'SinUso/form_cabania.html'
-    success_url = reverse_lazy('lista_cabanias')
-
-class modif_cabania(LoginRequiredMixin, UpdateView):
-    login_url = '/login/'
-    model = Cabania
-    form_class = formCabania
-    template_name = 'SinUso/form_cabania.html'
-    success_url = reverse_lazy('lista_cabanias')
-
-class borrar_cabania(LoginRequiredMixin, DeleteView):
-    """
-    Vista basada en clase para eliminar un encargado existente.
-
-    Permite a los usuarios eliminar un encargado existente utilizando una confirmación.
-
-    Attributes:
-        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
-        model (Encargado): Modelo utilizado para eliminar la instancia de encargado existente.
-        template_name (str): Nombre de la plantilla utilizada para confirmar la eliminación del encargado.
-        success_url (str): URL a la que se redirige después de eliminar con éxito el encargado.
-    """
-    login_url = '/login/'
-    model = Cabania
-    template_name = 'SinUso/conf_borrar_cabania.html'
-    success_url = reverse_lazy('lista_cabanias')
-
+#-----PROYECTO NETCELL--------------------------------------------------------
 
 #VISTAS DE CATEGORIA
 
@@ -585,6 +462,136 @@ class borrar_clienteNet(LoginRequiredMixin, DeleteView):
     template_name = 'ClienteNet/conf_borrar_clienteNet.html'
     success_url = reverse_lazy('lista_clientesNet')
   
+#-----PROYECTO RESERVAS--------------------------------------------------------
+
+#VISTAS ENCARGADO
+
+class lista_encargados(LoginRequiredMixin, ListView):
+    """
+    Vista basada en clase que muestra una lista paginada de encargados.
+
+    Permite filtrar la lista de encargados por nombre/apellido o número de DNI.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Encargado): Modelo utilizado para obtener los datos de la lista.
+        template_name (str): Nombre de la plantilla utilizada para renderizar la vista.
+        context_object_name (str): Nombre del objeto de contexto utilizado en la plantilla.
+        paginate_by (int): Número de elementos por página para la paginación.
+    """
+    login_url = '/login/'
+    model = Encargado
+    template_name = 'SinUso/lista_encargados.html'
+    context_object_name = 'encargados'
+    paginate_by = 10
+
+    def get_queryset(self):
+        """
+        Obtiene la lista de encargados filtrada según el parámetro de búsqueda.
+
+        Returns:
+            QuerySet: Lista filtrada de encargados según la consulta de búsqueda.
+        """
+        query = self.request.GET.get('q','')
+        encargados = Encargado.objects.filter(
+            Q(apellido_nombre__icontains=query) |
+            Q(dni__icontains=query)
+        )
+        return encargados
+
+class nuevo_encargado(LoginRequiredMixin, CreateView):
+    """
+    Vista basada en clase para crear un nuevo encargado.
+
+    Permite a los usuarios crear un nuevo encargado proporcionando un formulario predefinido.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Encargado): Modelo utilizado para crear una nueva instancia de encargado.
+        form_class (formEncargado): Formulario utilizado para la creación del encargado.
+        template_name (str): Nombre de la plantilla utilizada para renderizar el formulario.
+        success_url (str): URL a la que se redirige después de que se crea un nuevo encargado con éxito.
+    """
+    login_url = '/login/'
+    model = Encargado
+    form_class = formEncargado
+    template_name = 'SinUso/form_encargado.html'
+    success_url = reverse_lazy('lista_encargados')
+
+class modif_encargado(LoginRequiredMixin, UpdateView):
+    """
+    Vista basada en clase para modificar un encargado existente.
+
+    Permite a los usuarios modificar un encargado existente proporcionando un formulario predefinido.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Encargado): Modelo utilizado para modificar la instancia de encargado existente.
+        form_class (formEncargado): Formulario utilizado para la modificación del encargado.
+        template_name (str): Nombre de la plantilla utilizada para renderizar el formulario.
+        success_url (str): URL a la que se redirige después de que se modifica el encargado con éxito.
+    """
+    login_url = '/login/'
+    model = Encargado
+    form_class = formEncargado
+    template_name = 'SinUso/form_encargado.html'
+    success_url = reverse_lazy('lista_encargados')
+
+class borrar_encargado(LoginRequiredMixin,DeleteView):
+    login_url = '/login/'
+    model = Encargado
+    template_name = 'SinUso/conf_borrar_encargado.html'
+    success_url = reverse_lazy('lista_encargados')
+
+#VISTAS DE CABAÑAS
+
+class lista_cabanias(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    model = Cabania
+    template_name = 'SinUso/lista_cabanias.html'
+    context_object_name = 'cabanias'
+    paginate_by = 10
+
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')
+        cabanias = Cabania.objects.filter(
+            Q(nombre__contains = query) |
+            Q(tipo__icontains = query)
+        )
+
+        return cabanias
+
+class nuevo_cabania(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    model = Cabania
+    form_class = formCabania
+    template_name = 'SinUso/form_cabania.html'
+    success_url = reverse_lazy('lista_cabanias')
+
+class modif_cabania(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    model = Cabania
+    form_class = formCabania
+    template_name = 'SinUso/form_cabania.html'
+    success_url = reverse_lazy('lista_cabanias')
+
+class borrar_cabania(LoginRequiredMixin, DeleteView):
+    """
+    Vista basada en clase para eliminar un encargado existente.
+
+    Permite a los usuarios eliminar un encargado existente utilizando una confirmación.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Encargado): Modelo utilizado para eliminar la instancia de encargado existente.
+        template_name (str): Nombre de la plantilla utilizada para confirmar la eliminación del encargado.
+        success_url (str): URL a la que se redirige después de eliminar con éxito el encargado.
+    """
+    login_url = '/login/'
+    model = Cabania
+    template_name = 'SinUso/conf_borrar_cabania.html'
+    success_url = reverse_lazy('lista_cabanias')
+
 #VISTAS DE CLIENTES
 
 class lista_clientes(LoginRequiredMixin, ListView):

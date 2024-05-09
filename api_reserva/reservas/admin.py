@@ -3,13 +3,17 @@ from .models import Cliente, Encargado, Complejo, Cabania, Reserva, Servicio, Re
 
 # Register your models here.
 
-admin.site.register(Cliente)
+#-------NETCELL-----------------------
 
 admin.site.register(ClienteNet)
 
 admin.site.register(Proveedor)
 
 admin.site.register(Categoria)
+
+#-------RESERVAS-----------------------
+
+admin.site.register(Cliente)
 
 admin.site.register(Encargado)
 

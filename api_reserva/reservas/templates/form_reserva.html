@@ -1,0 +1,98 @@
+{% include 'navbar.html' %} 
+{% load static %} 
+{% block content %}
+
+<div class="contenedor1">
+    <section class="contenedorFormReserva">
+
+        <div class="formReserva">
+
+                <h1>Reserva</h1> 
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{form.as_p}}
+        
+                    {{ formset.management_form }}
+                    <a class="botonTerciario" href="{% url 'nuevo_cliente' %}?from_reserva=true&next={% url 'nuevo_reserva' %}">Nuevo Cliente</a>
+        </div>
+
+        <div class="setformServicio" id="formset-container">
+                    <h1>Servicios</h1>
+
+                    <table class="table table-striped table-hover" id="results">
+                        <thead>
+                            <th>Id</th>
+                            <th></th><th></th><th></th>
+                            <th>¿Borrar?</th>
+                        </thead>
+                        <tbody>
+                        {% for form in formset %}
+                        <tr>
+                            <td>{{ form.id.value }}</td>
+                            {% for field in form %}
+                                <td>{{ field }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+        </div>
+
+        <div class="totales" data-precio-cabania="{{ reserva.precio_original_cabania }}" data-cantidad-dias="{{ cantidad_dias }}" data-total-servicios="{{ total_servicios }}">
+            <h1>Totales</h1>
+            <p><strong>Precio Cabaña: </strong> <span id="precio_cabania">{{ reserva.precio_original_cabania }}</span></p>
+            <p><strong>Cantidad Dias: </strong> <span id="cantidad_dias">{{ cantidad_dias }}</span></p>
+            <p><strong>Total Cabaña: </strong> <span id="total_cabania">{{ total_cabania }}</span></p>
+            <p><strong>Total Servicios x Dia: </strong> <span id="total_servicios">{{ total_servicios }}</span></p>
+            <p><strong>Total Servicios x reserva: </strong> <span id="total_servicios_reserva">{{ total_servicios_reserva }}</span></p>
+            <p><strong>Total Reserva: </strong> <span id="total_reserva">{{ total_reserva }}</span></p>
+            
+        </div>
+        
+        <div class="contenedorBotones1">
+            <button class="botonSecundario" type="submit">Guardar</button>
+            <a class="botonSecundario" href="{% url 'lista_reservas' %}">Cancelar</a>
+        </div>
+
+                    </form>
+
+    </section>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<script>
+    // Configura el campo de autocompletado para el campo cliente
+    $(".autocomplete").autocomplete({
+        source: "{% url 'search_clients' %}",
+    });
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#complejo-select').change(function() {
+            var complejoId = $(this).val();
+            if (complejoId) {
+                $.ajax({
+                    url: '/obtener_cabanias/' + complejoId + '/',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#cabania-select').empty();
+                        $.each(data, function(key, value) {
+                            $('#cabania-select').append('<option value="' + key + '">' + value + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#cabania-select').empty();
+            }
+        });
+    });
+</script>
+
+{% endblock %} 

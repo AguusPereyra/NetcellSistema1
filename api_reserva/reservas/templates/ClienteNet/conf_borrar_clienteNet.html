@@ -1,0 +1,22 @@
+{% include 'navbar.html' %} 
+{% load static %} 
+{% block content %}
+
+<div class="contenedorConf">
+
+    <div class="confBorrar">
+        <h1>Borrar Cliente</h1>
+
+        <p>¿Esta seguro de borrar el cliente <b>{{ clienteNet.nombre_apellido}}</b>?</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="contenedorBotones">
+                <button type="submit" class="botonSecundario">Aceptar</button>
+                <a type="submit" class="botonSecundario" href="/clientesNet/">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %} 

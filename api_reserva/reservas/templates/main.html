@@ -1,0 +1,157 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block content %} 
+
+<header class="headerMain">
+    <div class="ReserVas">
+        <h1>Net<span>Cell</span></h1>
+    </div>
+    
+    <div class="mainConfig">
+        <button type="button" class="btn dark-mode">
+            <span class="material-symbols-outlined" id="botonDarkMode">
+                contrast
+            </span>
+        </button>
+
+        <div>
+            {% if request.user.is_authenticated %}
+            <h4 class="user">{{ request.user.username }}</h4>
+            <a href="/logout/">Logout</a>
+            {% else %}
+            <a href="/login/">Login</a>
+            {% endif %}
+        </div>
+    </div>
+
+</header>
+
+<div class="contenedorCard">
+
+    <a href="/reservas">
+        <div class="maincard" >
+            <div class="logos">
+                <span class="material-symbols-outlined">
+                    event_available
+                </span>
+                <h1>Servicio Técnico</h1>
+            </div>
+            <div class="descripcion">
+                <p> Ver Servicio Técnico.</p>
+            </div>
+        </div>
+    </a>
+
+    <a href="{% url 'cabanias_disponibles' %}">
+        <div class="maincard" >
+            <div class="logos">
+                <span class="material-symbols-outlined">
+                    calendar_month
+                </span>
+                <h1>Ventas</h1>
+            </div>
+            <div class="descripcion">
+                <p> Ver ventas. </p>
+            </div>
+        </div>
+    </a>
+
+    <a href="/encargados">
+        <div class="maincard" >
+            <div class="logos">
+                <span class="material-symbols-outlined">
+                    calendar_month
+                </span>
+                <h1>Artículos</h1>
+            </div>
+            <div class="descripcion">
+                <p> Ver tipos de Articulos.</p>
+            </div>  
+        </div>
+    </a>
+
+    <a href="/proveedores">
+        <div class="maincard" >
+            <div class="logos">
+                <span class="material-symbols-outlined">
+                    groups
+                </span>
+                <h1>Proveedores</h1>
+            </div>
+            <div class="descripcion">
+                <p> Ver Proveedores.</p>
+            </div>      
+        </div>
+    </a>
+
+    <a href="/categoria">
+        <div class="maincard" >
+            <div class="logos">
+                <span class="material-symbols-outlined">
+                    event_available
+                </span>
+                <h1>Categorias</h1>
+            </div>
+            <div class="descripcion">
+                <p> Ver categorias.</p>
+            </div>  
+        </div>
+    </a>
+    
+    <a href="/clientesNet">
+        <div class="maincard" >
+            <div class="logos">
+                <span class="material-symbols-outlined">
+                    groups
+                </span>
+                <h1>Clientes</h1>
+            </div>
+            <div class="descripcion">
+                <p> Ver clientes.</p>
+            </div>  
+        </div>
+    </a>
+
+    <a href="/cabanias">
+        <div class="maincard" >
+            <div class="logos">
+                <span class="material-symbols-outlined">
+                    groups
+                </span>
+                <h1>Usuarios</h1>
+            </div>
+            <div class="descripcion">
+                <p> Ver Usuarios.</p>
+            </div>  
+        </div>
+    </a>
+
+    <a href="/servicios">
+        <div class="maincard" >
+            <div class="logos">
+                <span class="material-symbols-outlined">
+                    local_cafe
+                </span>
+                <h1>Reportes</h1>
+            </div>
+            <div class="descripcion">
+                <p> Ver tipos de Reportes.</p>
+            </div>  
+        </div>
+    </a> 
+
+    <a href="/servicios">
+        <div class="maincard" >
+            <div class="logos">
+                <span class="material-symbols-outlined">
+                    local_cafe
+                </span>
+                <h1>Ajustes</h1>
+            </div>
+            <div class="descripcion">
+                <p> Ver servicios.</p>
+            </div>  
+        </div>
+    </a>
+</div>
+{% endblock %} 

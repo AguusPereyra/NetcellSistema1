@@ -1,0 +1,16 @@
+{% include 'navbar.html' %} 
+
+{% block content %}
+<div class="contenedorDetalle">
+    <div class="detalle">
+        <h1>Categoria</h1>
+        <h2>{{ categoria.categoria }}</h2>
+        <p><strong>Comentarios: </strong> {{ categoria.comentarios}}</p>
+        
+        <div class="contenedorBotones">
+            <a style="margin: 200px" class="botonSecundario" href="{% url 'lista_categoria' %}">Cancelar</a>   
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% include 'navbar.html' %} 
+
+{% block content %}
+
+<div class="contenedorDetalle">
+    <div class="detalle">
+
+        <h1>Servicios</h1>
+        <h2>{{servicio.nombre}}</h2>
+        <p><strong>Descripcion: </strong>{{ servicio.descripcion }}</p>
+        <p><strong>Precio: </strong>{{ servicio.precio }}</p>
+
+    </div>
+</div>
+
+{% endblock %} 

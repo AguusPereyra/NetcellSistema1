@@ -1,0 +1,19 @@
+{% include 'navbar.html' %} 
+
+{% block content %}
+<div class="contenedorDetalle">
+    <div class="detalle">
+        <h1>Cliente</h1>
+        <h2>{{ proveedor.nombre_empresa }}</h2>
+        <p><strong>DNI: </strong> {{ proveedor.dni}}</p>
+        <p><strong>Dirección: </strong> {{ proveedor.direccion}}</p>
+        <p><strong>Telefono: </strong> {{ proveedor.telefono}}</p>
+        <p><strong>Comentarios: </strong> {{ proveedor.comentarios}}</p>
+        
+
+        <div class="contenedorBotones">
+            <a style="margin: 50px" class="botonSecundario" href="{% url 'lista_proveedores' %}">Cancelar</a>   
+        </div>
+    </div>
+</div>
+{% endblock %}

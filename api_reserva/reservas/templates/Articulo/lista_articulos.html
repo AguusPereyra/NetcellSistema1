@@ -14,7 +14,7 @@
                 <input type="text" id="search" class="form-control inputApagado" name="q" value="{{ query }}" placeholder="Buscar Articulo...">
                 <button class="lupa" type="submit"><span class="material-symbols-outlined">search</span></button>
                 
-                <div class="d-flex justify-content-end align-items-end"><a class="botonPrimario" href="{% url 'nuevo_categoria' %}?from_lista=true">Nuevo Articulo</a></div>
+                <div class="d-flex justify-content-end align-items-end"><a class="botonPrimario" href="{% url 'nuevo_articulo' %}?from_lista=true">Nuevo Articulo</a></div>
         </form>
     </div>
 </div>
@@ -32,7 +32,7 @@
             </tr>       
         </thead>
         <tbody>
-            {% for articulo in articulo %} 
+            {% for articulo in articulos %} 
             <tr class="filas">
                 <td>{{ articulo.codigo }}</a></td>
                 <td>{{ articulo.descripcion }}</td>

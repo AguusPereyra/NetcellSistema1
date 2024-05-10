@@ -7,11 +7,11 @@ urlpatterns = [
     path('', views.main, name='main'),
 
 #-----PROYECTO NETCELL--------------------------------------------------------
-    path('articulo/', views.lista_articulo.as_view(), name='lista_articulo'),
-    path('articulo/<int:articulo_id>/', views.detalle_articulo, name='detalle_articulo'),
-    path('articulo/articuloNuevo/', views.nuevo_articulo.as_view(), name='nuevo_articulo'),
-    path('articulo/articuloModif/<int:pk>/', views.modif_articulo.as_view(), name='modif_articulo'),
-    path('articulo/articuloBorrar/<int:pk>/', views.borrar_articulo.as_view(), name='borrar_articulo'),
+    path('articulos/', views.lista_articulos.as_view(), name='lista_articulos'),
+    path('articulos/<int:articulo_id>/', views.detalle_articulo, name='detalle_articulo'),
+    path('articulos/articuloNuevo/', views.nuevo_articulo.as_view(), name='nuevo_articulo'),
+    path('articulos/articuloModif/<int:pk>/', views.modif_articulo.as_view(), name='modif_articulo'),
+    path('articulos/articuloBorrar/<int:pk>/', views.borrar_articulo.as_view(), name='borrar_articulo'),
 
     path('usuarios/', views.lista_usuarios.as_view(), name='lista_usuarios'),
     path('usuarios/<int:usuario_id>/', views.detalle_usuario, name='detalle_usuario'),

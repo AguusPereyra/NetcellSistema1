@@ -568,26 +568,28 @@ class borrar_cabania(LoginRequiredMixin, DeleteView):
 
 #VISTAS DE ARTICULO
 
-class lista_articulo(LoginRequiredMixin, ListView):
+class lista_articulos(LoginRequiredMixin, ListView):
     login_url = '/login/'
     model = Articulo
-    template_name = 'Articulo/lista_articulo.html'
-    context_object_name = 'articulo'
+    template_name = 'Articulo/lista_articulos.html'
+    context_object_name = 'articulos'
     paginate_by = 10
 
     def get_queryset(self):
         query = self.request.GET.get('q', '')
-        articulo = Articulo.objects.filter(
-            Q(articulo__icontains=query) # Búsqueda por articulo
+        articulos = Articulo.objects.filter(
+            Q(descripcion__icontains=query)| # Búsqueda por nombre del clienteNet
+            Q(codigo__icontains=query)             # Búsqueda por DNI del clienteNet
         )
 
-        return  articulo
+        return  articulos
 
 class nuevo_articulo(LoginRequiredMixin, CreateView):
     login_url = '/login/'
     model = Articulo
     form_class = formArticulo
     template_name = 'Articulo/form_articulo.html'
+    #success_url = reverse_lazy('lista_articulos')
 
     def form_valid(self, form):
         self.object = form.save()
@@ -597,7 +599,7 @@ class nuevo_articulo(LoginRequiredMixin, CreateView):
             return HttpResponseRedirect(next_url or reverse('nuevo_reserva'))
         elif self.request.GET.get('from_lista'):
             # Redirigir de vuelta a la lista de clientes después de guardar el cliente
-            return HttpResponseRedirect(reverse('lista_articulo'))
+            return HttpResponseRedirect(reverse('lista_articulos'))
         else:
             # Si no se especifica ninguna fuente, redirigir al formulario de reserva por defecto
             return HttpResponseRedirect(next_url or reverse('nuevo_reserva'))
@@ -607,13 +609,13 @@ class modif_articulo(LoginRequiredMixin, UpdateView):
     model = Articulo
     form_class = formArticulo
     template_name = 'Articulo/form_articulo.html'
-    success_url = reverse_lazy('lista_articulo')
+    success_url = reverse_lazy('lista_articulos')
 
-class borrar_categoria(LoginRequiredMixin, DeleteView):
+class borrar_articulo(LoginRequiredMixin, DeleteView):
     login_url = '/login/'
     model = Articulo
     template_name = 'Articulo/conf_borrar_articulo.html'
-    success_url = reverse_lazy('lista_articulo')
+    success_url = reverse_lazy('lista_articulos')
 
 
 #VISTAS DE CATEGORIA

@@ -15,7 +15,7 @@ class Articulo(models.Model):
     stockMinimo = models.IntegerField()
     categoria = models.CharField(max_length=30, choices=[('Mutual Luz y Fuerza','Mutual Luz y Fuerza')])
     proveedor = models.CharField(max_length=30, choices=[('Mutual Luz y Fuerza','Mutual Luz y Fuerza')])
-    ubicación = models.CharField(max_length=30, choices=[('Depósito','Depósito'), ('Shopping', 'Shopping'), ('Rosas','Rosas')])
+    ubicacion = models.CharField(max_length=30, choices=[('Depósito','Depósito'), ('Shopping', 'Shopping'), ('Rosas','Rosas')])
 
     def __str__(self):
         return self.descripcion

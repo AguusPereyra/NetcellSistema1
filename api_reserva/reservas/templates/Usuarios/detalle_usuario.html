@@ -1,0 +1,21 @@
+{% include 'navbar.html' %} 
+
+{% block content %}
+<div class="contenedorDetalle">
+    <div class="detalle">
+        <h1>Usuario</h1>
+        <h2>{{ usuario.nombre_usuario }}</h2>
+        <p><strong>Nombre y Apellido: </strong> {{ usuario.apeynombre}}</p>
+        <p><strong>Dni: </strong> {{ usuario.dni}}</p>
+        <p><strong>Telefono: </strong> {{ usuario.telefono}}</p>
+        <p><strong>e-mail: </strong> {{ usuario.email}}</p>
+        <p><strong>Local: </strong> {{ usuario.locales}}</p>
+        <p><strong>Rol: </strong> {{ usuario.roles}}</p>
+        
+
+        <div class="contenedorBotones">
+            <a style="margin: 50px" class="botonSecundario" href="{% url 'lista_usuarios' %}">Cancelar</a>   
+        </div>
+    </div>
+</div>
+{% endblock %}

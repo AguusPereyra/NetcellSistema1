@@ -1,0 +1,22 @@
+{% include 'navbar.html' %} 
+{% load static %} 
+{% block content %}
+
+<div class="contenedorConf">
+
+    <div class="confBorrar">
+        <h1>Borrar Usuario</h1>
+
+        <p>¿Esta seguro de borrar este usuario <b>{{ usuario.nombre_usuario}}</b>?</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="contenedorBotones">
+               <button type="submit" class="botonSecundario">Aceptar</button>
+                <a type="submit" class="botonSecundario" href="/usuarios/">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

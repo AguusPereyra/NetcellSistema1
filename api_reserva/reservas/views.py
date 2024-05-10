@@ -308,6 +308,109 @@ def detalle_servicio(request, servicio_id):
     } 
     return render(request, 'detalle_servicio.html', context)
 
+#VISTAS USUARIO
+
+def detalle_usuario(request, usuario_id):
+    """
+    Vista que muestra los detalles de un usuario específico identificado por su ID.
+
+    Recupera y muestra los detalles de un usuario, identificado por el parámetro usuario_id, 
+    incluyendo todos los atributos disponibles del usuario.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        usuario_id (int): El ID del usuario del cual se mostrarán los detalles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'detalle_usuario.html' con el contexto que contiene los detalles del usuario.
+    
+    Raises:
+        Usuario.DoesNotExist: Si el usuario con el ID proporcionado no existe en la base de datos.
+    """
+    usuario =Usuario.objects.get(id=usuario_id)
+
+    context={
+        'usuario': usuario
+    }
+    return render(request,'detalle_usuario.html', context)
+
+class lista_usuarios(LoginRequiredMixin, ListView):
+    """
+    Vista basada en clase que muestra una lista paginada de usuarios.
+
+    Permite filtrar la lista de usuarios por nombre/apellido o número de DNI.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Usuario): Modelo utilizado para obtener los datos de la lista.
+        template_name (str): Nombre de la plantilla utilizada para renderizar la vista.
+        context_object_name (str): Nombre del objeto de contexto utilizado en la plantilla.
+        paginate_by (int): Número de elementos por página para la paginación.
+    """
+    login_url = '/login/'
+    model = Usuario
+    template_name = 'Usuario/lista_usuarios.html'
+    context_object_name = 'usuario'
+    paginate_by = 10
+
+    def get_queryset(self):
+        """
+        Obtiene la lista de usuarios filtrada según el parámetro de búsqueda.
+
+        Returns:
+            QuerySet: Lista filtrada de usuarios según la consulta de búsqueda.
+        """
+        query = self.request.GET.get('q','')
+        usuarios = Usuario.objects.filter(
+            Q(apeynombre__icontains=query) |
+            Q(dni__icontains=query)
+        )
+        return usuarios
+
+class nuevo_usuario(LoginRequiredMixin, CreateView):
+    """
+    Vista basada en clase para crear un nuevo usuario.
+
+    Permite a los usuarios crear un nuevo usuario proporcionando un formulario predefinido.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Usuario): Modelo utilizado para crear una nueva instancia de usuario.
+        form_class (formUsuario): Formulario utilizado para la creación del usuario.
+        template_name (str): Nombre de la plantilla utilizada para renderizar el formulario.
+        success_url (str): URL a la que se redirige después de que se crea un nuevo usuario con éxito.
+    """
+    login_url = '/login/'
+    model = Usuario
+    form_class = formUsuario
+    template_name = 'Usuario/form_usuario.html'
+    success_url = reverse_lazy('lista_usuarios')
+
+class modif_usuario(LoginRequiredMixin, UpdateView):
+    """
+    Vista basada en clase para modificar un usuario existente.
+
+    Permite a los usuarios modificar un usuario existente proporcionando un formulario predefinido.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Usuario): Modelo utilizado para modificar la instancia de usuario existente.
+        form_class (formUsuario): Formulario utilizado para la modificación del usuario.
+        template_name (str): Nombre de la plantilla utilizada para renderizar el formulario.
+        success_url (str): URL a la que se redirige después de que se modifica el usuario con éxito.
+    """
+    login_url = '/login/'
+    model = Usuario
+    form_class = formUsuario
+    template_name = 'Usuario/form_usuario.html'
+    success_url = reverse_lazy('lista_usuarios')
+
+class borrar_usuario(LoginRequiredMixin,DeleteView):
+    login_url = '/login/'
+    model = Usuario
+    template_name = 'conf_borrar_usuario.html'
+    success_url = reverse_lazy('lista_usuarios')
+
 #VISTAS ENCARGADO
 
 class lista_encargados(LoginRequiredMixin, ListView):

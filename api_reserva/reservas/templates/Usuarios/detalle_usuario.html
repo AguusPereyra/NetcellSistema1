@@ -4,17 +4,17 @@
 <div class="contenedorDetalle">
     <div class="detalle">
         <h1>Usuario</h1>
-        <h2>{{ usuario.nombre_usuario }}</h2>
-        <p><strong>Nombre y Apellido: </strong> {{ usuario.apeynombre}}</p>
-        <p><strong>Dni: </strong> {{ usuario.dni}}</p>
-        <p><strong>Telefono: </strong> {{ usuario.telefono}}</p>
-        <p><strong>e-mail: </strong> {{ usuario.email}}</p>
-        <p><strong>Local: </strong> {{ usuario.locales}}</p>
-        <p><strong>Rol: </strong> {{ usuario.roles}}</p>
+        <h2>{{ usuarios.nombre_usuario }}</h2>
+        <p><strong>Nombre y Apellido: </strong> {{ usuarios.apeynombre}}</p>
+        <p><strong>Dni: </strong> {{ usuarios.dni}}</p>
+        <p><strong>Telefono: </strong> {{ usuarios.telefono}}</p>
+        <p><strong>e-mail: </strong> {{ usuarios.email}}</p>
+        <p><strong>Local: </strong> {{ usuarios.locales}}</p>
+        <p><strong>Rol: </strong> {{ usuarios.roles}}</p>
         
 
         <div class="contenedorBotones">
-            <a style="margin: 50px" class="botonSecundario" href="{% url 'lista_usuarios' %}">Cancelar</a>   
+            <a style="margin: 50px" class="botonSecundario" href="{% url 'lista_usuarios' %}">Volver</a>   
         </div>
     </div>
 </div>

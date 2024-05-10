@@ -1,5 +1,5 @@
 from django import forms
-from .models import Cabania, Encargado, Cliente, Categoria, ClienteNet, Complejo, Reserva, Servicio, ReservaServicio, Proveedor, Usuario
+from .models import Cabania, Encargado, Cliente, Categoria, ClienteNet, Complejo, Reserva, Servicio, ReservaServicio, Proveedor, Usuario, Articulo
 
 class formUsuario(forms.ModelForm):
     class Meta:
@@ -18,6 +18,23 @@ class formUsuario(forms.ModelForm):
         }
 
 #-----PROYECTO NETCELL--------------------------------------------------------
+
+class formArticulo(forms.ModelForm):
+     class Meta:
+            model = Articulo
+            fields = ('codigo', 'descripcion', 'costo', 'ganancia', 'precioVenta', 'stock', 'stockMinimo', 'categoria', 'proveedor', 'ubicacion')
+            widgets = {
+                'codigo': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese un Código'}),
+                'descripcion': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese una Descripción'}),
+                'costo': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese un Costo'}),
+                'ganancia': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su Ganancia'}),
+                'precioVenta': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su Precio Venta'}),
+                'stock': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su Stock'}),
+                'stockMinimo': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su Stock Minimo'}),
+                'categoria': forms.Select(attrs={'class': 'form-select'}),
+                'proveedor': forms.Select(attrs={'class': 'form-select'}),
+                'ubicacion': forms.Select(attrs={'class': 'form-select'}),
+            }
 
 class formProveedor(forms.ModelForm):
     class Meta:

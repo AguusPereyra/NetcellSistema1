@@ -1,8 +1,8 @@
 from typing import Any
 from django.db.models.query import QuerySet
 from django.shortcuts import render, HttpResponseRedirect, reverse, redirect
-from .models import Reserva, Cliente, ClienteNet, Categoria, Proveedor, Encargado, Usuario, Complejo, Cabania, Servicio, ReservaServicio
-from .forms import formCabania, formEncargado,formUsuario, formCliente, formClienteNet, formProveedor, formCategoria, formComplejo, formServicio, formReserva, formReservaServicio
+from .models import Reserva, Cliente, ClienteNet, Categoria, Proveedor, Encargado, Usuario, Complejo, Cabania, Servicio, ReservaServicio, Articulo
+from .forms import formCabania, formEncargado,formUsuario, formCliente, formClienteNet, formProveedor,formArticulo, formCategoria, formComplejo, formServicio, formReserva, formReservaServicio
 from django.views.generic import  CreateView, UpdateView, DeleteView, ListView
 from django.urls import reverse_lazy
 from django.db.models import Q
@@ -38,6 +38,7 @@ def main(request):
     categoria = Categoria.objects.all()
     proveedores = Proveedor.objects.all()
     usuarios = Usuario.objects.all()
+    articulo = Articulo.objects.all()
 
     context = {'reservas': reservas,
                'clientes': clientes,
@@ -50,11 +51,37 @@ def main(request):
                'categoria': categoria,
                'proveedores': proveedores,
                'usuarios': usuarios,
+               'articulo': articulo
                }
     
     return render(request, 'main.html', context)
 
 #-----PROYECTO NETCELL--------------------------------------------------------
+
+def detalle_articulo(request, articulo_id):
+    """
+    Vista que muestra los detalles de un cliente específico identificado por su ID.
+
+    Recupera y muestra los detalles de un cliente, identificado por el parámetro cliente_id, 
+    incluyendo todos los atributos disponibles del cliente.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        cliente_id (int): El ID del cliente del cual se mostrarán los detalles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'detalle_cliente.html' con el contexto que contiene los detalles del cliente.
+    
+    Raises:
+        Cliente.DoesNotExist: Si el cliente con el ID proporcionado no existe en la base de datos.
+    """
+    articulo = Articulo.objects.get(id=articulo_id) #solo toma el id de la categoria
+
+    context = {
+        'articulo': articulo
+    }
+    return render(request, 'Articulo/detalle_articulo.html', context)
+
 
 def detalle_proveedor(request, proveedor_id):
     """
@@ -427,6 +454,186 @@ class borrar_usuario(LoginRequiredMixin,DeleteView):
     model = Usuario
     template_name = 'Usuarios/conf_borrar_usuario.html'
     success_url = reverse_lazy('lista_usuarios')
+
+#VISTAS ENCARGADO
+
+class lista_encargados(LoginRequiredMixin, ListView):
+    """
+    Vista basada en clase que muestra una lista paginada de encargados.
+
+    Permite filtrar la lista de encargados por nombre/apellido o número de DNI.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Encargado): Modelo utilizado para obtener los datos de la lista.
+        template_name (str): Nombre de la plantilla utilizada para renderizar la vista.
+        context_object_name (str): Nombre del objeto de contexto utilizado en la plantilla.
+        paginate_by (int): Número de elementos por página para la paginación.
+    """
+    login_url = '/login/'
+    model = Encargado
+    template_name = 'lista_encargados.html'
+    context_object_name = 'encargados'
+    paginate_by = 10
+
+    def get_queryset(self):
+        """
+        Obtiene la lista de encargados filtrada según el parámetro de búsqueda.
+
+        Returns:
+            QuerySet: Lista filtrada de encargados según la consulta de búsqueda.
+        """
+        query = self.request.GET.get('q','')
+        encargados = Encargado.objects.filter(
+            Q(apellido_nombre__icontains=query) |
+            Q(dni__icontains=query)
+        )
+        return encargados
+
+class nuevo_encargado(LoginRequiredMixin, CreateView):
+    """
+    Vista basada en clase para crear un nuevo encargado.
+
+    Permite a los usuarios crear un nuevo encargado proporcionando un formulario predefinido.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Encargado): Modelo utilizado para crear una nueva instancia de encargado.
+        form_class (formEncargado): Formulario utilizado para la creación del encargado.
+        template_name (str): Nombre de la plantilla utilizada para renderizar el formulario.
+        success_url (str): URL a la que se redirige después de que se crea un nuevo encargado con éxito.
+    """
+    login_url = '/login/'
+    model = Encargado
+    form_class = formEncargado
+    template_name = 'form_encargado.html'
+    success_url = reverse_lazy('lista_encargados')
+
+class modif_encargado(LoginRequiredMixin, UpdateView):
+    """
+    Vista basada en clase para modificar un encargado existente.
+
+    Permite a los usuarios modificar un encargado existente proporcionando un formulario predefinido.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Encargado): Modelo utilizado para modificar la instancia de encargado existente.
+        form_class (formEncargado): Formulario utilizado para la modificación del encargado.
+        template_name (str): Nombre de la plantilla utilizada para renderizar el formulario.
+        success_url (str): URL a la que se redirige después de que se modifica el encargado con éxito.
+    """
+    login_url = '/login/'
+    model = Encargado
+    form_class = formEncargado
+    template_name = 'form_encargado.html'
+    success_url = reverse_lazy('lista_encargados')
+
+class borrar_encargado(LoginRequiredMixin,DeleteView):
+    login_url = '/login/'
+    model = Encargado
+    template_name = 'conf_borrar_encargado.html'
+    success_url = reverse_lazy('lista_encargados')
+
+#VISTAS DE CABAÑAS
+
+class lista_cabanias(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    model = Cabania
+    template_name = 'lista_cabanias.html'
+    context_object_name = 'cabanias'
+    paginate_by = 10
+
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')
+        cabanias = Cabania.objects.filter(
+            Q(nombre__contains = query) |
+            Q(tipo__icontains = query)
+        )
+
+        return cabanias
+
+class nuevo_cabania(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    model = Cabania
+    form_class = formCabania
+    template_name = 'form_cabania.html'
+    success_url = reverse_lazy('lista_cabanias')
+
+class modif_cabania(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    model = Cabania
+    form_class = formCabania
+    template_name = 'form_cabania.html'
+    success_url = reverse_lazy('lista_cabanias')
+
+class borrar_cabania(LoginRequiredMixin, DeleteView):
+    """
+    Vista basada en clase para eliminar un encargado existente.
+
+    Permite a los usuarios eliminar un encargado existente utilizando una confirmación.
+
+    Attributes:
+        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
+        model (Encargado): Modelo utilizado para eliminar la instancia de encargado existente.
+        template_name (str): Nombre de la plantilla utilizada para confirmar la eliminación del encargado.
+        success_url (str): URL a la que se redirige después de eliminar con éxito el encargado.
+    """
+    login_url = '/login/'
+    model = Cabania
+    template_name = 'conf_borrar_cabania.html'
+    success_url = reverse_lazy('lista_cabanias')
+
+#VISTAS DE ARTICULO
+
+class lista_articulos(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    model = Articulo
+    template_name = 'Articulo/lista_articulos.html'
+    context_object_name = 'articulos'
+    paginate_by = 10
+
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')
+        articulos = Articulo.objects.filter(
+            Q(descripcion__icontains=query)| # Búsqueda por nombre del clienteNet
+            Q(codigo__icontains=query)             # Búsqueda por DNI del clienteNet
+        )
+
+        return  articulos
+
+class nuevo_articulo(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    model = Articulo
+    form_class = formArticulo
+    template_name = 'Articulo/form_articulo.html'
+    #success_url = reverse_lazy('lista_articulos')
+
+    def form_valid(self, form):
+        self.object = form.save()
+        next_url = self.request.GET.get('next')
+        if self.request.GET.get('from_reserva'):
+            # Redirigir de vuelta al formulario de reserva después de guardar el cliente
+            return HttpResponseRedirect(next_url or reverse('nuevo_reserva'))
+        elif self.request.GET.get('from_lista'):
+            # Redirigir de vuelta a la lista de clientes después de guardar el cliente
+            return HttpResponseRedirect(reverse('lista_articulos'))
+        else:
+            # Si no se especifica ninguna fuente, redirigir al formulario de reserva por defecto
+            return HttpResponseRedirect(next_url or reverse('nuevo_reserva'))
+        
+class modif_articulo(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    model = Articulo
+    form_class = formArticulo
+    template_name = 'Articulo/form_articulo.html'
+    success_url = reverse_lazy('lista_articulos')
+
+class borrar_articulo(LoginRequiredMixin, DeleteView):
+    login_url = '/login/'
+    model = Articulo
+    template_name = 'Articulo/conf_borrar_articulo.html'
+    success_url = reverse_lazy('lista_articulos')
+
 
 #VISTAS DE CATEGORIA
 

@@ -5,6 +5,20 @@ from datetime import timedelta
 # Create your models here.
 
 #-----PROYECTO NETCELL--------------------------------------------------------------------------------------------------------------
+class Articulo(models.Model):
+    codigo = models.IntegerField()
+    descripcion = models.CharField(max_length=100)
+    costo = models.IntegerField()
+    ganancia = models.IntegerField()
+    precioVenta = models.IntegerField()
+    stock = models.IntegerField()
+    stockMinimo = models.IntegerField()
+    categoria = models.CharField(max_length=30, choices=[('Mutual Luz y Fuerza','Mutual Luz y Fuerza')])
+    proveedor = models.CharField(max_length=30, choices=[('Mutual Luz y Fuerza','Mutual Luz y Fuerza')])
+    ubicacion = models.CharField(max_length=30, choices=[('Depósito','Depósito'), ('Shopping', 'Shopping'), ('Rosas','Rosas')])
+
+    def __str__(self):
+        return self.descripcion
 
 class Usuario(models.Model):
     nombre_usuario = models.CharField(max_length=50)

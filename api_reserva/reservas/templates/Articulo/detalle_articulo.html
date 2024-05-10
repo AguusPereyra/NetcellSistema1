@@ -1,0 +1,20 @@
+{% include 'navbar.html' %} 
+
+{% block content %}
+<div class="contenedorDetalle">
+    <div class="detalle">
+        <h1>Articulo</h1>
+        <h2>{{ articulo.nombre_apellido }}</h2>
+        <p><strong>DNI: </strong> {{ articulo.dni}}</p>
+        <p><strong>Dirección: </strong> {{ articulo.direccion}}</p>
+        <p><strong>Telefono: </strong> {{ articulo.telefono}}</p>
+        <p><strong>Comentarios: </strong> {{ articulo.comentarios}}</p>
+        <p><strong>Grupo: </strong>{{ articulo.grupo }}</p>
+        
+
+        <div class="contenedorBotones">
+            <a style="margin: 50px" class="botonSecundario" href="{% url 'lista_clientesNet' %}">Cancelar</a>   
+        </div>
+    </div>
+</div>
+{% endblock %}

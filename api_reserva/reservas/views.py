@@ -1,8 +1,8 @@
 from typing import Any
 from django.db.models.query import QuerySet
 from django.shortcuts import render, HttpResponseRedirect, reverse, redirect
-from .models import Reserva, Cliente, ClienteNet, Categoria, Proveedor, Encargado, Usuario, Complejo, Cabania, Servicio, ReservaServicio
-from .forms import formCabania, formEncargado,formUsuario, formCliente, formClienteNet, formProveedor, formCategoria, formComplejo, formServicio, formReserva, formReservaServicio
+from .models import Reserva, Cliente, ClienteNet, Categoria, Proveedor, Encargado, Usuario, Complejo, Cabania, Servicio, ReservaServicio, Articulo
+from .forms import formCabania, formEncargado,formUsuario, formCliente, formClienteNet, formProveedor,formArticulo, formCategoria, formComplejo, formServicio, formReserva, formReservaServicio
 from django.views.generic import  CreateView, UpdateView, DeleteView, ListView
 from django.urls import reverse_lazy
 from django.db.models import Q
@@ -37,6 +37,7 @@ def main(request):
     categoria = Categoria.objects.all()
     proveedores = Proveedor.objects.all()
     usuario = Usuario.objects.all()
+    articulo = Articulo.objects.all()
 
     context = {'reservas': reservas,
                'clientes': clientes,
@@ -49,11 +50,37 @@ def main(request):
                'categoria': categoria,
                'proveedores': proveedores,
                'usuario': usuario,
+               'articulo': articulo
                }
     
     return render(request, 'main.html', context)
 
 #-----PROYECTO NETCELL--------------------------------------------------------
+
+def detalle_articulo(request, articulo_id):
+    """
+    Vista que muestra los detalles de un cliente específico identificado por su ID.
+
+    Recupera y muestra los detalles de un cliente, identificado por el parámetro cliente_id, 
+    incluyendo todos los atributos disponibles del cliente.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        cliente_id (int): El ID del cliente del cual se mostrarán los detalles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'detalle_cliente.html' con el contexto que contiene los detalles del cliente.
+    
+    Raises:
+        Cliente.DoesNotExist: Si el cliente con el ID proporcionado no existe en la base de datos.
+    """
+    articulo = Articulo.objects.get(id=articulo_id) #solo toma el id de la categoria
+
+    context = {
+        'articulo': articulo
+    }
+    return render(request, 'Articulo/detalle_articulo.html', context)
+
 
 def detalle_proveedor(request, proveedor_id):
     """
@@ -538,6 +565,55 @@ class borrar_cabania(LoginRequiredMixin, DeleteView):
     model = Cabania
     template_name = 'conf_borrar_cabania.html'
     success_url = reverse_lazy('lista_cabanias')
+
+#VISTAS DE ARTICULO
+
+class lista_articulo(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    model = Articulo
+    template_name = 'Articulo/lista_articulo.html'
+    context_object_name = 'articulo'
+    paginate_by = 10
+
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')
+        articulo = Articulo.objects.filter(
+            Q(articulo__icontains=query) # Búsqueda por articulo
+        )
+
+        return  articulo
+
+class nuevo_articulo(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    model = Articulo
+    form_class = formArticulo
+    template_name = 'Articulo/form_articulo.html'
+
+    def form_valid(self, form):
+        self.object = form.save()
+        next_url = self.request.GET.get('next')
+        if self.request.GET.get('from_reserva'):
+            # Redirigir de vuelta al formulario de reserva después de guardar el cliente
+            return HttpResponseRedirect(next_url or reverse('nuevo_reserva'))
+        elif self.request.GET.get('from_lista'):
+            # Redirigir de vuelta a la lista de clientes después de guardar el cliente
+            return HttpResponseRedirect(reverse('lista_articulo'))
+        else:
+            # Si no se especifica ninguna fuente, redirigir al formulario de reserva por defecto
+            return HttpResponseRedirect(next_url or reverse('nuevo_reserva'))
+        
+class modif_articulo(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    model = Articulo
+    form_class = formArticulo
+    template_name = 'Articulo/form_articulo.html'
+    success_url = reverse_lazy('lista_articulo')
+
+class borrar_categoria(LoginRequiredMixin, DeleteView):
+    login_url = '/login/'
+    model = Articulo
+    template_name = 'Articulo/conf_borrar_articulo.html'
+    success_url = reverse_lazy('lista_articulo')
 
 
 #VISTAS DE CATEGORIA

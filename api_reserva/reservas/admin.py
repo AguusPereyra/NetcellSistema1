@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Cliente, Encargado, Complejo, Cabania, Reserva, Servicio, ReservaServicio, ClienteNet, Proveedor, Categoria
+from .models import Cliente, Encargado, Complejo, Cabania, Reserva, Servicio, ReservaServicio, ClienteNet, Proveedor, Categoria, Articulo
 
 # Register your models here.
 
@@ -10,6 +10,8 @@ admin.site.register(ClienteNet)
 admin.site.register(Proveedor)
 
 admin.site.register(Categoria)
+
+admin.site.register(Articulo)
 
 #-------RESERVAS-----------------------
 

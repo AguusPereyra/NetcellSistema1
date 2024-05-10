@@ -14,7 +14,7 @@
             <input type="text" id="search" class="form-control inputApagado" name="q" value="{{ query }}" placeholder="Buscar Usuario...">
             <button class="lupa" type="submit"><span class="material-symbols-outlined">search</span></button>
 
-            <div class="d-flex justify-content-end align-items-end"><a class="botonPrimario" href="/usuarios/usuarioNuevo/">Añadir</a></div>
+            <div class="d-flex justify-content-end align-items-end"><a class="botonPrimario" href="/usuarios/usuarioNuevo">Añadir</a></div>
         </form>
     </div>
 
@@ -35,10 +35,13 @@
         <tbody>
             {% for usuario in usuarios %} 
             <tr class="filas">
-                <td><a href="{% url 'detalle_usuario' usuario.id %}">{{ usuario.dni }}</a></td>
-                <td>{{ usuario.apellido_nombre }}</td>
+                <td><a href="{% url 'detalle_usuario' usuario.id %}">{{ usuario.nombre_usuario }}</a></td>
+                <td>{{ usuario.apeynombre }}</td>
                 <td>{{ usuario.telefono }}</td>
                 <td>{{ usuario.email}}</td>
+                <td>{{ usuario.dni}}</td>
+                <td>{{ usuario.locales}}</td>
+                <td>{{ usuario.roles}}</td>
                 <td class="d-flex justify-content-end align-items-end"><a class="botonTerciario" href="/usuarios/usuarioModif/{{ usuario.id }}">Modificar</a></td>
                 <td><a class="botonSecundario" href="/usuarios/usuarioBorrar/{{ usuario.id }}">Borrar</a></td>
             {% endfor %} 

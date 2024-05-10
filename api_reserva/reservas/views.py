@@ -36,7 +36,7 @@ def main(request):
     clientesNet = ClienteNet.objects.all()
     categoria = Categoria.objects.all()
     proveedores = Proveedor.objects.all()
-    usuario = Usuario.objects.all()
+    usuarios = Usuario.objects.all()
     articulo = Articulo.objects.all()
 
     context = {'reservas': reservas,
@@ -49,7 +49,7 @@ def main(request):
                'clientesNet': clientesNet,
                'categoria': categoria,
                'proveedores': proveedores,
-               'usuario': usuario,
+               'usuarios': usuarios,
                'articulo': articulo
                }
     
@@ -354,12 +354,12 @@ def detalle_usuario(request, usuario_id):
     Raises:
         Usuario.DoesNotExist: Si el usuario con el ID proporcionado no existe en la base de datos.
     """
-    usuario =Usuario.objects.get(id=usuario_id)
+    usuarios =Usuario.objects.get(id=usuario_id)
 
     context={
-        'usuario': usuario
+        'usuarios': usuarios
     }
-    return render(request,'detalle_usuario.html', context)
+    return render(request,'Usuarios/detalle_usuario.html', context)
 
 class lista_usuarios(LoginRequiredMixin, ListView):
     """
@@ -376,8 +376,8 @@ class lista_usuarios(LoginRequiredMixin, ListView):
     """
     login_url = '/login/'
     model = Usuario
-    template_name = 'Usuario/lista_usuarios.html'
-    context_object_name = 'usuario'
+    template_name = 'Usuarios/lista_usuarios.html'
+    context_object_name = 'usuarios'
     paginate_by = 10
 
     def get_queryset(self):
@@ -410,7 +410,7 @@ class nuevo_usuario(LoginRequiredMixin, CreateView):
     login_url = '/login/'
     model = Usuario
     form_class = formUsuario
-    template_name = 'Usuario/form_usuario.html'
+    template_name = 'Usuarios/form_usuario.html'
     success_url = reverse_lazy('lista_usuarios')
 
 class modif_usuario(LoginRequiredMixin, UpdateView):
@@ -429,13 +429,13 @@ class modif_usuario(LoginRequiredMixin, UpdateView):
     login_url = '/login/'
     model = Usuario
     form_class = formUsuario
-    template_name = 'Usuario/form_usuario.html'
+    template_name = 'Usuarios/form_usuario.html'
     success_url = reverse_lazy('lista_usuarios')
 
 class borrar_usuario(LoginRequiredMixin,DeleteView):
     login_url = '/login/'
     model = Usuario
-    template_name = 'conf_borrar_usuario.html'
+    template_name = 'Usuarios/conf_borrar_usuario.html'
     success_url = reverse_lazy('lista_usuarios')
 
 #VISTAS ENCARGADO

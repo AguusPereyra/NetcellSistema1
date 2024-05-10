@@ -14,10 +14,11 @@ urlpatterns = [
     path('articulo/articuloBorrar/<int:pk>/', views.borrar_articulo.as_view(), name='borrar_articulo'),
 
     path('usuarios/', views.lista_usuarios.as_view(), name='lista_usuarios'),
+    path('usuarios/<int:usuario_id>/', views.detalle_usuario, name='detalle_usuario'),
     path('usuarios/usuarioNuevo', views.nuevo_usuario.as_view(), name='nuevo_usuario'),
     path('usuarios/usuarioModif/<int:pk>/', views.modif_usuario.as_view(), name='modif_usuario'),
     path('usuarios/usuarioBorrar/<int:pk>/', views.borrar_usuario.as_view(), name='borrar_usuario'),
-    path('usuarios/<int:usuario_id>/', views.detalle_usuario, name='detalle_usuario'),
+    
 
     path('clientesNet/', views.lista_clientesNet.as_view(), name='lista_clientesNet'),
     path('clientesNet/<int:clienteNet_id>/', views.detalle_clienteNet, name='detalle_clienteNet'),

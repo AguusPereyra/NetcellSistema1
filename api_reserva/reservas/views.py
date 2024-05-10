@@ -14,6 +14,7 @@ from django.contrib.auth import logout
 from django.http import HttpResponse
 from datetime import datetime
 from django.forms import inlineformset_factory
+from django.contrib.auth.models import User, Group 
 from django.contrib.auth.hashers import make_password
 
 # Create your views here.
@@ -362,6 +363,7 @@ def detalle_usuario(request, usuario_id):
     }
     return render(request,'Usuarios/detalle_usuario.html', context)
 
+
 class lista_usuarios(LoginRequiredMixin, ListView):
     """
     Vista basada en clase que muestra una lista paginada de usuarios.
@@ -414,21 +416,33 @@ class nuevo_usuario(LoginRequiredMixin, CreateView):
     template_name = 'Usuarios/form_usuario.html'
     success_url = reverse_lazy('lista_usuarios')
 
-    def form_valid(self, form):
-        """
-        Procesa el formulario cuando es válido.
+def registrar_usuario(request):
+    if request.method == 'POST':
+        # Crea una instancia del formulario con los datos recibidos
+        form = formUsuario(request.POST)
+        if form.is_valid():
+            # Obtiene los datos del formulario validado
+            username = form.cleaned_data['nombre_usuario']
+            password = form.cleaned_data['contrasenia']
+            email = form.cleaned_data['email']
 
-        Args:
-            form (formUsuario): El formulario validado.
+            # Cifra la contraseña
+            hashed_password = make_password(password)
 
-        Returns:
-            HttpResponseRedirect: Redirige a la URL de éxito si el formulario es válido.
-        """
-        # Obtiene la contraseña del formulario
-        password = form.cleaned_data['contrasenia']
-        # Cifra la contraseña utilizando make_password()
-        form.instance.contrasenia = make_password(password)
-        return super().form_valid(form)
+            # Crea el usuario
+            nuevo_usuario = User.objects.create_user(username=username, password=hashed_password, email=email)
+
+            # Asigna permisos
+            grupo_administradores, creado = Group.objects.get_or_create(name='Administradores')
+            nuevo_usuario.groups.add(grupo_administradores)
+
+            return redirect('main')  # Redirige a la página de inicio después de crear el usuario
+    else:
+        # Si la solicitud no es POST, crea una instancia vacía del formulario
+        form = formUsuario()
+
+    # Renderiza el formulario en el contexto de la página
+    return render(request, 'registrar_usuario.html', {'form': form})
 
 class modif_usuario(LoginRequiredMixin, UpdateView):
     """
@@ -454,134 +468,6 @@ class borrar_usuario(LoginRequiredMixin,DeleteView):
     model = Usuario
     template_name = 'Usuarios/conf_borrar_usuario.html'
     success_url = reverse_lazy('lista_usuarios')
-
-#VISTAS ENCARGADO
-
-class lista_encargados(LoginRequiredMixin, ListView):
-    """
-    Vista basada en clase que muestra una lista paginada de encargados.
-
-    Permite filtrar la lista de encargados por nombre/apellido o número de DNI.
-
-    Attributes:
-        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
-        model (Encargado): Modelo utilizado para obtener los datos de la lista.
-        template_name (str): Nombre de la plantilla utilizada para renderizar la vista.
-        context_object_name (str): Nombre del objeto de contexto utilizado en la plantilla.
-        paginate_by (int): Número de elementos por página para la paginación.
-    """
-    login_url = '/login/'
-    model = Encargado
-    template_name = 'lista_encargados.html'
-    context_object_name = 'encargados'
-    paginate_by = 10
-
-    def get_queryset(self):
-        """
-        Obtiene la lista de encargados filtrada según el parámetro de búsqueda.
-
-        Returns:
-            QuerySet: Lista filtrada de encargados según la consulta de búsqueda.
-        """
-        query = self.request.GET.get('q','')
-        encargados = Encargado.objects.filter(
-            Q(apellido_nombre__icontains=query) |
-            Q(dni__icontains=query)
-        )
-        return encargados
-
-class nuevo_encargado(LoginRequiredMixin, CreateView):
-    """
-    Vista basada en clase para crear un nuevo encargado.
-
-    Permite a los usuarios crear un nuevo encargado proporcionando un formulario predefinido.
-
-    Attributes:
-        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
-        model (Encargado): Modelo utilizado para crear una nueva instancia de encargado.
-        form_class (formEncargado): Formulario utilizado para la creación del encargado.
-        template_name (str): Nombre de la plantilla utilizada para renderizar el formulario.
-        success_url (str): URL a la que se redirige después de que se crea un nuevo encargado con éxito.
-    """
-    login_url = '/login/'
-    model = Encargado
-    form_class = formEncargado
-    template_name = 'form_encargado.html'
-    success_url = reverse_lazy('lista_encargados')
-
-class modif_encargado(LoginRequiredMixin, UpdateView):
-    """
-    Vista basada en clase para modificar un encargado existente.
-
-    Permite a los usuarios modificar un encargado existente proporcionando un formulario predefinido.
-
-    Attributes:
-        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
-        model (Encargado): Modelo utilizado para modificar la instancia de encargado existente.
-        form_class (formEncargado): Formulario utilizado para la modificación del encargado.
-        template_name (str): Nombre de la plantilla utilizada para renderizar el formulario.
-        success_url (str): URL a la que se redirige después de que se modifica el encargado con éxito.
-    """
-    login_url = '/login/'
-    model = Encargado
-    form_class = formEncargado
-    template_name = 'form_encargado.html'
-    success_url = reverse_lazy('lista_encargados')
-
-class borrar_encargado(LoginRequiredMixin,DeleteView):
-    login_url = '/login/'
-    model = Encargado
-    template_name = 'conf_borrar_encargado.html'
-    success_url = reverse_lazy('lista_encargados')
-
-#VISTAS DE CABAÑAS
-
-class lista_cabanias(LoginRequiredMixin, ListView):
-    login_url = '/login/'
-    model = Cabania
-    template_name = 'lista_cabanias.html'
-    context_object_name = 'cabanias'
-    paginate_by = 10
-
-    def get_queryset(self):
-        query = self.request.GET.get('q', '')
-        cabanias = Cabania.objects.filter(
-            Q(nombre__contains = query) |
-            Q(tipo__icontains = query)
-        )
-
-        return cabanias
-
-class nuevo_cabania(LoginRequiredMixin, CreateView):
-    login_url = '/login/'
-    model = Cabania
-    form_class = formCabania
-    template_name = 'form_cabania.html'
-    success_url = reverse_lazy('lista_cabanias')
-
-class modif_cabania(LoginRequiredMixin, UpdateView):
-    login_url = '/login/'
-    model = Cabania
-    form_class = formCabania
-    template_name = 'form_cabania.html'
-    success_url = reverse_lazy('lista_cabanias')
-
-class borrar_cabania(LoginRequiredMixin, DeleteView):
-    """
-    Vista basada en clase para eliminar un encargado existente.
-
-    Permite a los usuarios eliminar un encargado existente utilizando una confirmación.
-
-    Attributes:
-        login_url (str): URL a la que se redirige si el usuario no ha iniciado sesión.
-        model (Encargado): Modelo utilizado para eliminar la instancia de encargado existente.
-        template_name (str): Nombre de la plantilla utilizada para confirmar la eliminación del encargado.
-        success_url (str): URL a la que se redirige después de eliminar con éxito el encargado.
-    """
-    login_url = '/login/'
-    model = Cabania
-    template_name = 'conf_borrar_cabania.html'
-    success_url = reverse_lazy('lista_cabanias')
 
 #VISTAS DE ARTICULO
 

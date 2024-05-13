@@ -58,23 +58,7 @@ def main(request):
 #-----PROYECTO NETCELL--------------------------------------------------------
 
 def detalle_articulo(request, articulo_id):
-    """
-    Vista que muestra los detalles de un cliente específico identificado por su ID.
-
-    Recupera y muestra los detalles de un cliente, identificado por el parámetro cliente_id, 
-    incluyendo todos los atributos disponibles del cliente.
-
-    Args:
-        request (HttpRequest): La solicitud HTTP recibida.
-        cliente_id (int): El ID del cliente del cual se mostrarán los detalles.
-
-    Returns:
-        HttpResponse: Renderiza la plantilla 'detalle_cliente.html' con el contexto que contiene los detalles del cliente.
-    
-    Raises:
-        Cliente.DoesNotExist: Si el cliente con el ID proporcionado no existe en la base de datos.
-    """
-    articulo = Articulo.objects.get(id=articulo_id) #solo toma el id de la categoria
+    articulo = Articulo.objects.get(id=articulo_id) #solo toma el id del articulo
 
     context = {
         'articulo': articulo
@@ -104,7 +88,7 @@ def detalle_proveedor(request, proveedor_id):
     context = {
         'proveedor': proveedor
     }
-    return render(request, 'Proveedor/detalle_proveedor.html', context)
+    return render(request, 'Proveedores/detalle_proveedores.html', context)
 
 def detalle_categoria(request, categoria_id):
     """

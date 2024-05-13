@@ -7,12 +7,12 @@
     <div class="confBorrar">
         <h1>Borrar Articulo</h1>
 
-        <p>¿Esta seguro de borrar este articulo<b>{{ articulo.descripcion}}</b>?</p>
+        <p>¿Esta seguro de borrar este articulo <b>{{ articulo.descripcion}}</b>?</p>
         <form method="post">
             {% csrf_token %}
             <div class="contenedorBotones">
                 <button type="submit" class="botonSecundario">Aceptar</button>
-                <a type="submit" class="botonSecundario" href="/articulo/">Cancelar</a>
+                <a type="submit" class="botonSecundario" href="/articulos/">Cancelar</a>
             </div>
         </form>
     </div>

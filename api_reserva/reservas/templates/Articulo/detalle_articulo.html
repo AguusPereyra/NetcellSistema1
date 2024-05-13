@@ -2,13 +2,14 @@
 
 {% block content %}
 <div class="contenedorDetalle">
-    <div class="detalle">
+    <div style="height: 94vh; width: 52%" class="detalle">
         <h1>Articulo</h1>
-        <h2>{{ articulo.codigo }}</h2>
-        <p><strong>Descripción: </strong> {{ articulo.descripcion}}</p>
+        <h2>{{ articulo.descripcion }}</h2>
+        <p><strong>Código: </strong> {{ articulo.codigo}}</p>
         <p><strong>Costo: </strong> {{ articulo.costo}}</p>
         <p><strong>Ganancia: </strong> {{ articulo.ganancia}}</p>
         <p><strong>Precio Venta: </strong> {{ articulo.precioVenta}}</p>
+        <p><strong>Descuento: </strong> {{ articulo.descuento}}</p>
         <p><strong>Stock: </strong> {{ articulo.stock}}</p>
         <p><strong>Stock Min.: </strong> {{ articulo.stockMinimo}}</p>
         <p><strong>Categoria: </strong>{{ articulo.categoria }}</p>

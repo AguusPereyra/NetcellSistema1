@@ -32,19 +32,19 @@
             </tr>       
         </thead>
         <tbody>
-            {% for articulo in articulos %} 
+            {% for articulo in articulo %} 
             <tr class="filas">
                 <td>{{ articulo.codigo }}</a></td>
-                <td>{{ articulo.descripcion }}</td>
-                <td>{{ articulo.precio }}</a></td>
+                <td><a href="{% url 'detalle_articulo' articulo.id %}">{{ articulo.descripcion }}</a></td>
+                <td>{{ articulo.precioVenta }}</a></td>
                 <td>{{ articulo.stock }}</td>
                 <td>{{ articulo.categoria }}</a></td>
                 <td>{{ articulo.proveedor }}</td>
                 <td>{{ articulo.costo }}</a></td>
                 <td>{{ articulo.descuento }}</td>
 
-                <td class="d-flex justify-content-end align-items-end"><a class="botonTerciario" href="/articulo/articuloModif/{{ articulo.id }}"> Modificar</td>
-                <td><a class="botonSecundario" href="/articulo/articuloBorrar/{{ articulo.id }}">Borrar</a></td>
+                <td class="d-flex justify-content-end align-items-end"><a class="botonTerciario" href="/articulos/articuloModif/{{ articulo.id }}"> Modificar</td>
+                <td><a class="botonSecundario" href="/articulos/articuloBorrar/{{ articulo.id }}">Borrar</a></td>
             {% endfor %} 
         </tbody>
     </table>

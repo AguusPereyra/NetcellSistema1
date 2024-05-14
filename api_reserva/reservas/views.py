@@ -39,7 +39,7 @@ def main(request):
     categoria = Categoria.objects.all()
     proveedores = Proveedor.objects.all()
     usuarios = Usuario.objects.all()
-    articulo = Articulo.objects.all()
+    articulos = Articulo.objects.all()
 
     context = {'reservas': reservas,
                'clientes': clientes,
@@ -52,85 +52,35 @@ def main(request):
                'categoria': categoria,
                'proveedores': proveedores,
                'usuarios': usuarios,
-               'articulo': articulo
+               'articulos': articulos
                }
     
     return render(request, 'main.html', context)
 
 #-----PROYECTO NETCELL--------------------------------------------------------
 
-def detalle_articulo(request, articulo_id):
-    """
-    Vista que muestra los detalles de un cliente específico identificado por su ID.
-
-    Recupera y muestra los detalles de un cliente, identificado por el parámetro cliente_id, 
-    incluyendo todos los atributos disponibles del cliente.
-
-    Args:
-        request (HttpRequest): La solicitud HTTP recibida.
-        cliente_id (int): El ID del cliente del cual se mostrarán los detalles.
-
-    Returns:
-        HttpResponse: Renderiza la plantilla 'detalle_cliente.html' con el contexto que contiene los detalles del cliente.
-    
-    Raises:
-        Cliente.DoesNotExist: Si el cliente con el ID proporcionado no existe en la base de datos.
-    """
-    articulo = Articulo.objects.get(id=articulo_id) #solo toma el id de la categoria
-
-    context = {
-        'articulo': articulo
-    }
-    return render(request, 'Articulo/detalle_articulo.html', context)
-
-
 def detalle_proveedor(request, proveedor_id):
-    """
-    Vista que muestra los detalles de un cliente específico identificado por su ID.
-
-    Recupera y muestra los detalles de un cliente, identificado por el parámetro cliente_id, 
-    incluyendo todos los atributos disponibles del cliente.
-
-    Args:
-        request (HttpRequest): La solicitud HTTP recibida.
-        cliente_id (int): El ID del cliente del cual se mostrarán los detalles.
-
-    Returns:
-        HttpResponse: Renderiza la plantilla 'detalle_cliente.html' con el contexto que contiene los detalles del cliente.
     
-    Raises:
-        Cliente.DoesNotExist: Si el cliente con el ID proporcionado no existe en la base de datos.
-    """
-    proveedor = Proveedor.objects.get(id=proveedor_id) #solo toma el id de la categoria
+    #solo toma el id del proveedor
+    proveedor = Proveedor.objects.get(id=proveedor_id) 
 
     context = {
         'proveedor': proveedor
     }
     return render(request, 'Proveedor/detalle_proveedor.html', context)
 
+
+
 def detalle_categoria(request, categoria_id):
-    """
-    Vista que muestra los detalles de un cliente específico identificado por su ID.
-
-    Recupera y muestra los detalles de un cliente, identificado por el parámetro cliente_id, 
-    incluyendo todos los atributos disponibles del cliente.
-
-    Args:
-        request (HttpRequest): La solicitud HTTP recibida.
-        cliente_id (int): El ID del cliente del cual se mostrarán los detalles.
-
-    Returns:
-        HttpResponse: Renderiza la plantilla 'detalle_cliente.html' con el contexto que contiene los detalles del cliente.
     
-    Raises:
-        Cliente.DoesNotExist: Si el cliente con el ID proporcionado no existe en la base de datos.
-    """
-    categoria = Categoria.objects.get(id=categoria_id) #solo toma el id de la categoria
+    #solo toma el id de la categoria
+    categoria = Categoria.objects.get(id=categoria_id) 
 
     context = {
         'categoria': categoria
     }
     return render(request, 'Categoria/detalle_categoria.html', context)
+
 
 def detalle_clienteNet(request, clienteNet_id):
     """
@@ -468,58 +418,7 @@ class borrar_usuario(LoginRequiredMixin,DeleteView):
     model = Usuario
     template_name = 'Usuarios/conf_borrar_usuario.html'
     success_url = reverse_lazy('lista_usuarios')
-
-#VISTAS DE ARTICULO
-
-class lista_articulos(LoginRequiredMixin, ListView):
-    login_url = '/login/'
-    model = Articulo
-    template_name = 'Articulo/lista_articulos.html'
-    context_object_name = 'articulos'
-    paginate_by = 10
-
-    def get_queryset(self):
-        query = self.request.GET.get('q', '')
-        articulos = Articulo.objects.filter(
-            Q(descripcion__icontains=query)| # Búsqueda por nombre del clienteNet
-            Q(codigo__icontains=query)             # Búsqueda por DNI del clienteNet
-        )
-
-        return  articulos
-
-class nuevo_articulo(LoginRequiredMixin, CreateView):
-    login_url = '/login/'
-    model = Articulo
-    form_class = formArticulo
-    template_name = 'Articulo/form_articulo.html'
-    #success_url = reverse_lazy('lista_articulos')
-
-    def form_valid(self, form):
-        self.object = form.save()
-        next_url = self.request.GET.get('next')
-        if self.request.GET.get('from_reserva'):
-            # Redirigir de vuelta al formulario de reserva después de guardar el cliente
-            return HttpResponseRedirect(next_url or reverse('nuevo_reserva'))
-        elif self.request.GET.get('from_lista'):
-            # Redirigir de vuelta a la lista de clientes después de guardar el cliente
-            return HttpResponseRedirect(reverse('lista_articulos'))
-        else:
-            # Si no se especifica ninguna fuente, redirigir al formulario de reserva por defecto
-            return HttpResponseRedirect(next_url or reverse('nuevo_reserva'))
-        
-class modif_articulo(LoginRequiredMixin, UpdateView):
-    login_url = '/login/'
-    model = Articulo
-    form_class = formArticulo
-    template_name = 'Articulo/form_articulo.html'
-    success_url = reverse_lazy('lista_articulos')
-
-class borrar_articulo(LoginRequiredMixin, DeleteView):
-    login_url = '/login/'
-    model = Articulo
-    template_name = 'Articulo/conf_borrar_articulo.html'
-    success_url = reverse_lazy('lista_articulos')
-
+    
 
 #VISTAS DE CATEGORIA
 
@@ -622,6 +521,65 @@ class borrar_proveedor(LoginRequiredMixin, DeleteView):
     model = Proveedor
     template_name = 'Proveedores/conf_borrar_proveedores.html'
     success_url = reverse_lazy('lista_proveedores')
+
+
+#VISTAS DE ARTICULO
+
+def detalle_articulo(request, articulo_id):    
+    #solo toma el id del articulo
+    articulo = Articulo.objects.get(id=articulo_id)  
+
+    context = {
+        'articulo': articulo
+    }
+    return render(request, 'Articulo/detalle_articulo.html', context)
+
+class lista_articulos(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    model = Articulo
+    template_name = 'Articulo/lista_articulos.html'
+    context_object_name = 'articulo'
+    paginate_by = 10
+
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')
+        articulos = Articulo.objects.filter(
+            Q(codigo__icontains=query)|
+            Q(descripcion__icontains=query)
+        )
+
+        return  articulos
+
+
+class nuevo_articulo(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    model = Articulo
+    form_class = formArticulo
+    template_name = 'Articulo/form_articulo.html'
+
+    def form_valid(self, form):
+        self.object = form.save()
+        next_url = self.request.GET.get('next')
+        if self.request.GET.get('from_reserva'):
+            
+            return HttpResponseRedirect(next_url or reverse('nuevo_reserva'))
+        elif self.request.GET.get('from_lista'):            
+            return HttpResponseRedirect(reverse('lista_articulos'))
+        else:            
+            return HttpResponseRedirect(next_url or reverse('nuevo_reserva'))
+        
+class modif_articulo(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    model = Articulo
+    form_class = formArticulo
+    template_name = 'Articulo/form_articulo.html'
+    success_url = reverse_lazy('lista_articulos')
+
+class borrar_articulo(LoginRequiredMixin, DeleteView):
+    login_url = '/login/'
+    model = Articulo
+    template_name = 'Articulo/conf_borrar_articulo.html'
+    success_url = reverse_lazy('lista_articulos')
 
 
 #VISTAS DE CLIENTESNET

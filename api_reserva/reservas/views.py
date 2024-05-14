@@ -16,6 +16,7 @@ from datetime import datetime
 from django.forms import inlineformset_factory
 from django.contrib.auth.models import User, Group 
 from django.contrib.auth.hashers import make_password
+from urllib.parse import unquote
 
 # Create your views here.
 
@@ -545,10 +546,31 @@ class lista_articulos(LoginRequiredMixin, ListView):
         query = self.request.GET.get('q', '')
         articulos = Articulo.objects.filter(
             Q(codigo__icontains=query)|
-            Q(descripcion__icontains=query)
+            Q(descripcion__icontains=query)|
+            Q(ubicacion__icontains=query)
         )
 
         return  articulos
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+    
+    # Obtener la ubicación seleccionada del parámetro GET
+        ubicacion_seleccionada_encoded = self.request.GET.get('q', '')
+        ubicacion_seleccionada = unquote(ubicacion_seleccionada_encoded)
+        print("Ubicación seleccionada:", ubicacion_seleccionada)
+
+    # Obtener las ubicaciones únicas para poblar el desplegable
+        context['ubicaciones'] = Articulo.objects.values_list('ubicacion', flat=True).distinct()
+
+    # Filtrar los artículos basados en la ubicación seleccionada
+        if ubicacion_seleccionada:
+            context['articulos'] = Articulo.objects.filter(ubicacion__icontains=ubicacion_seleccionada)
+        else:
+        # Si no se selecciona una ubicación, mostrar todos los artículos
+            context['articulos'] = Articulo.objects.all()
+
+        return context
 
 
 class nuevo_articulo(LoginRequiredMixin, CreateView):

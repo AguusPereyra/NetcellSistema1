@@ -8,14 +8,32 @@
 
     <h2 class="col display-4 my-3">Articulo</h2>
 
+    <div style="padding-right: calc(var(--bs-gutter-x)* 8.5)" class=" col d-flex justify-content-end align-items-end mb-3">
+        <form style="margin-left: 0" method="GET">
+                <div class="input-group">
+                    <select id="search" value="{{ query }}" name="q">
+                        <option value="" selected disabled>Selecciona Ubicación</option>
+                        {% for ubicacion in ubicaciones %}
+                            <option value="{{ ubicacion }}">{{ ubicacion }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-primary" type="submit">Filtrar</button>
+                </div>
+        </form>        
+    </div>
+
+
     <div class=" col d-flex justify-content-end align-items-end mb-3">
+
         <form method="GET">
             <div class="input-group">
                 <input type="text" id="search" class="form-control inputApagado" name="q" value="{{ query }}" placeholder="Buscar Articulo...">
                 <button class="lupa" type="submit"><span class="material-symbols-outlined">search</span></button>
-                
-                <div class="d-flex justify-content-end align-items-end"><a class="botonPrimario" href="{% url 'nuevo_articulo' %}?from_lista=true">Nuevo Articulo</a></div>
+            </div>
         </form>
+                    
+        <div class="d-flex justify-content-end align-items-end"><a class="botonPrimario" href="{% url 'nuevo_articulo' %}?from_lista=true">Nuevo Articulo</a></div>
+        
     </div>
 </div>
     <table class="table table-striped table-hover" id="results" data-bs-theme="light">

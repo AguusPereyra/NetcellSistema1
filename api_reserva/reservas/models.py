@@ -7,32 +7,6 @@ from datetime import timedelta
 #-----PROYECTO NETCELL--------------------------------------------------------------------------------------------------------------
 
 
-class Usuario(models.Model):
-    nombre_usuario = models.CharField(max_length=50)
-    apeynombre= models.CharField(max_length=50)
-    contrasenia = models.CharField(max_length=30)
-    repeat_contrasenia = models.CharField(max_length=30)
-    telefono = models.CharField(max_length=20)
-    email = models.EmailField(max_length=30, default='netcell@gmail.com')
-    dni = models.IntegerField()
-
-    OPCIONES_LOCAL = [
-        ('deposito', 'Deposito'),
-        ('shopping', 'Shopping'),
-        ('rosas', 'Rosas'),
-    ]
-    locales = models.CharField(max_length=20, choices=OPCIONES_LOCAL, default='rosas')
-
-    OPCIONES_ROL = [
-        ('tecnico', 'Servicio Tecnico'),
-        ('ventas', 'Usuario ventas'),
-        ('admin', 'Administrador'),
-    ]
-    roles = models.CharField(max_length=7, choices=OPCIONES_ROL, default='usuario')
-    
-    def __str__(self):
-        return self.nombre_usuario
-
 class Proveedor(models.Model):
     nombre_empresa = models.CharField(max_length=100)
     dni = models.IntegerField()

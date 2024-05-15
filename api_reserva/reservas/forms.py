@@ -1,23 +1,41 @@
 from django import forms
-from .models import Cabania, Encargado, Cliente, Categoria, ClienteNet, Complejo, Reserva, Servicio, ReservaServicio, Proveedor, Usuario, Articulo
-
-class formUsuario(forms.ModelForm):
-    class Meta:
-        model = Usuario
-        fields = ('nombre_usuario', 'apeynombre', 'contrasenia', 'repeat_contrasenia', 'telefono', 'email', 'dni', 'locales', 'roles')
-        widgets = {
-            'nombre_usuario': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su Nombre de Usuario'}),
-            'apeynombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su Nombre y Apellido'}),
-            'contrasenia': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su Contraseña'}),
-            'repeat_contrasenia': forms.PasswordInput(attrs={'class': 'form-control' , 'placeholder': 'Repita su contraseña'}),
-            'telefono': forms.NumberInput(attrs={'class': 'form-control' , 'placeholder': 'Ingrese su Número Telefónico'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su e-mail'}),
-            'dni': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su DNI'}),
-            'locales': forms.Select(attrs={'class': 'form-select'}),
-            'roles': forms.Select(attrs={'class': 'form-select'})
-        }
+from django.contrib.auth.models import User
+from .models import Cabania, Encargado, Cliente, Categoria, ClienteNet, Complejo 
+from .models import Servicio, ReservaServicio, Proveedor, Articulo, Reserva
 
 #-----PROYECTO NETCELL--------------------------------------------------------
+
+class UserRegistrationForm(forms.ModelForm):
+
+    choices=[
+        ('Shopping', 'Shopping'),
+        ('Rosas', 'Rosas'),
+        ('Deposito', 'Deposito')
+    ]
+    
+    locales = forms.ChoiceField(label='Local', choices=choices, widget=forms.Select(attrs={'class': 'form-select'}))
+
+    password = forms.CharField(label='Password',
+                               widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Repeat Password',
+                                widget=forms.PasswordInput)
+    
+    
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su username'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su Nombre y Apellido'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su Email'}),
+        }
+
+    def clean_password2(self):
+        cd = self.cleaned_data
+        if cd['password'] != cd['password2']:
+            return forms.ValidationError('Las contraseñas no son iguales')
+        return cd['password2']
+    
 
 class formArticulo(forms.ModelForm):
      class Meta:

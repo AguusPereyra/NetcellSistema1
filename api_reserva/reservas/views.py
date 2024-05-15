@@ -1,8 +1,9 @@
 from typing import Any
 from django.db.models.query import QuerySet
 from django.shortcuts import render, HttpResponseRedirect, reverse, redirect
-from .models import Reserva, Cliente, ClienteNet, Categoria, Proveedor, Encargado, Usuario, Complejo, Cabania, Servicio, ReservaServicio, Articulo
-from .forms import formCabania, formEncargado,formUsuario, formCliente, formClienteNet, formProveedor,formArticulo, formCategoria, formComplejo, formServicio, formReserva, formReservaServicio
+from django.contrib.auth.models import User
+from .models import Reserva, Cliente, ClienteNet, Categoria, Proveedor, Encargado, Complejo, Cabania, Servicio, ReservaServicio, Articulo
+from .forms import formCabania, formEncargado,UserRegistrationForm, formCliente, formClienteNet, formProveedor,formArticulo, formCategoria, formComplejo, formServicio, formReserva, formReservaServicio
 from django.views.generic import  CreateView, UpdateView, DeleteView, ListView
 from django.urls import reverse_lazy
 from django.db.models import Q
@@ -16,6 +17,7 @@ from datetime import datetime
 from django.forms import inlineformset_factory
 from django.contrib.auth.models import User, Group 
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.views import logout_then_login
 from urllib.parse import unquote
 
 # Create your views here.
@@ -39,7 +41,7 @@ def main(request):
     clientesNet = ClienteNet.objects.all()
     categoria = Categoria.objects.all()
     proveedores = Proveedor.objects.all()
-    usuarios = Usuario.objects.all()
+    usuarios = User.objects.all()
     articulos = Articulo.objects.all()
 
     context = {'reservas': reservas,
@@ -58,7 +60,23 @@ def main(request):
     
     return render(request, 'main.html', context)
 
+def Logout(request):
+    """
+    Función para cerrar la sesión de un usuario.
+
+    Realiza el proceso de cierre de sesión en Django y redirige al usuario a la página de inicio.
+
+    Args:
+        request (HttpRequest): Objeto de solicitud HTTP.
+
+    Returns:
+        HttpResponseRedirect: Redirige al usuario a la página de inicio.
+    """
+    logout(request)
+    return redirect('/')
+
 #-----PROYECTO NETCELL--------------------------------------------------------
+#-----INICIO Detalles de vistas-------------------------------------
 
 def detalle_proveedor(request, proveedor_id):
     
@@ -107,189 +125,6 @@ def detalle_clienteNet(request, clienteNet_id):
     }
     return render(request, 'ClienteNet/detalle_clienteNet.html', context)
 
-#-----PROYECTO RESERVAS--------------------------------------------------------
-
-def detalle_cliente(request, cliente_id):
-    """
-    Vista que muestra los detalles de un cliente específico identificado por su ID.
-
-    Recupera y muestra los detalles de un cliente, identificado por el parámetro cliente_id, 
-    incluyendo todos los atributos disponibles del cliente.
-
-    Args:
-        request (HttpRequest): La solicitud HTTP recibida.
-        cliente_id (int): El ID del cliente del cual se mostrarán los detalles.
-
-    Returns:
-        HttpResponse: Renderiza la plantilla 'detalle_cliente.html' con el contexto que contiene los detalles del cliente.
-    
-    Raises:
-        Cliente.DoesNotExist: Si el cliente con el ID proporcionado no existe en la base de datos.
-    """
-    cliente = Cliente.objects.get(id=cliente_id) #solo toma el id del cliente         #toma todos los atributos del cliente
-
-    context = {
-        'cliente': cliente
-    }
-    return render(request, 'SinUso/detalle_cliente.html', context)
-
-
-def detalle_encargado(request, encargado_id):
-    """
-    Vista que muestra los detalles de un encargado específico identificado por su ID.
-
-    Recupera y muestra los detalles de un encargado, identificado por el parámetro encargado_id, 
-    incluyendo todos los atributos disponibles del encargado.
-
-    Args:
-        request (HttpRequest): La solicitud HTTP recibida.
-        encargado_id (int): El ID del encargado del cual se mostrarán los detalles.
-
-    Returns:
-        HttpResponse: Renderiza la plantilla 'detalle_encargado.html' con el contexto que contiene los detalles del encargado.
-    
-    Raises:
-        Encargado.DoesNotExist: Si el encargado con el ID proporcionado no existe en la base de datos.
-    """
-    encargado = Encargado.objects.get(id=encargado_id)
-
-    context={
-        'encargado': encargado
-    }
-    return render(request,'SinUso/detalle_encargado.html', context)
-
-
-def detalle_complejo(request, complejo_id):
-    """
-    Vista que muestra los detalles de un complejo específico identificado por su ID.
-
-    Recupera y muestra los detalles de un complejo, identificado por el parámetro complejo_id, 
-    incluyendo todos los atributos disponibles del complejo.
-
-    Args:
-        request (HttpRequest): La solicitud HTTP recibida.
-        complejo_id (int): El ID del complejo del cual se mostrarán los detalles.
-
-    Returns:
-        HttpResponse: Renderiza la plantilla 'detalle_complejo.html' con el contexto que contiene los detalles del complejo.
-    
-    Raises:
-        Complejo.DoesNotExist: Si el complejo con el ID proporcionado no existe en la base de datos.
-    """
-    complejo = Complejo.objects.get(id=complejo_id)
-
-    context = {
-        'complejo': complejo
-    }
-    return render(request, 'SinUso/detalle_complejo.html', context)
-
-
-def detalle_cabania(request, cabania_id):
-    """
-    Vista que muestra los detalles de una cabaña específica identificada por su ID.
-
-    Recupera y muestra los detalles de una cabaña, identificada por el parámetro cabania_id, 
-    incluyendo todos los atributos disponibles de la cabaña.
-
-    Args:
-        request (HttpRequest): La solicitud HTTP recibida.
-        cabania_id (int): El ID de la cabaña de la cual se mostrarán los detalles.
-
-    Returns:
-        HttpResponse: Renderiza la plantilla 'detalle_cabania.html' con el contexto que contiene los detalles de la cabaña.
-    
-    Raises:
-        Cabania.DoesNotExist: Si la cabaña con el ID proporcionado no existe en la base de datos.
-    """
-    cabania = Cabania.objects.get(id=cabania_id)
-
-    context = {
-        'cabania': cabania
-    }
-    return render(request, 'SinUso/detalle_cabania.html', context)
-
-def detalle_reserva(request, reserva_id):
-    """
-    Vista que muestra los detalles de una reserva específica identificada por su ID.
-
-    Recupera y muestra los detalles de una reserva, identificada por el parámetro reserva_id, 
-    incluyendo el cálculo del precio total de la reserva, considerando el precio de la cabaña y servicios asociados.
-
-    Args:
-        request (HttpRequest): La solicitud HTTP recibida.
-        reserva_id (int): El ID de la reserva de la cual se mostrarán los detalles.
-
-    Returns:
-        HttpResponse: Renderiza la plantilla 'detalle_reserva.html' con el contexto que contiene los detalles de la reserva.
-    
-    Raises:
-        Reserva.DoesNotExist: Si la reserva con el ID proporcionado no existe en la base de datos.
-    """
-
-    #obtener la reservas especifica por su ID
-    reserva = Reserva.objects.get(id=reserva_id)
-
-    #calculo de detalles de la reserva
-    cabania = reserva.cabania.precio
-    entrada = reserva.diaEntrada #dia entrada
-    salida = reserva.diaSalida  #dia salida
-    cantidad_dias = (salida - entrada).days #calculo de la diferencia entre dia de entrada y salida
-    total_cabania = cabania * cantidad_dias #calculo entre el precio de la cabaña y la cantidad de dias
-    total_servicios = 0 #calculo sobre el total de servicios
-    reserva_servicios = ReservaServicio.objects.filter(reserva=reserva)
-
-    # Iterar sobre cada formulario en el formset
-    for reserva_servicio in reserva_servicios:
-        servicio = reserva_servicio.servicio
-        total_servicios += servicio.precio
-
-    total_servicios = total_servicios * cantidad_dias
-
-    total_reserva = total_cabania + total_servicios #calculo sobre el total de la reserva
-    print(total_servicios, total_reserva)
-
-    context = {
-            'reserva': reserva,
-            'cabania': cabania,
-            'cantidad_dias': cantidad_dias,
-            'total_cabania': total_cabania,
-            'total_servicios': total_servicios,
-            'total_reserva': total_reserva,
-            'total_servicios': total_servicios
-        }
-
-    return render(request, 'SinUso/detalle_reserva.html', context)
-
-def obtener_cabanias(request, complejo_id):
-    cabanias = Cabania.objects.filter(complejo_id=complejo_id).values_list('id','nombre')
-    cabanias_dict = dict(cabanias)
-    return JsonResponse(cabanias_dict)
-
-def detalle_servicio(request, servicio_id):
-    """
-    Vista que muestra los detalles de un servicio específico identificado por su ID.
-
-    Recupera y muestra los detalles de un servicio, identificado por el parámetro servicio_id.
-
-    Args:
-        request (HttpRequest): La solicitud HTTP recibida.
-        servicio_id (int): El ID del servicio del cual se mostrarán los detalles.
-
-    Returns:
-        HttpResponse: Renderiza la plantilla 'detalle_servicio.html' con el contexto que contiene los detalles del servicio.
-    
-    Raises:
-        Servicio.DoesNotExist: Si el servicio con el ID proporcionado no existe en la base de datos.
-    """
-    servicio = Servicio.objects.get(id=servicio_id)
-
-    context = {
-        'servicio': servicio
-    } 
-    return render(request, 'detalle_servicio.html', context)
-
-#VISTAS USUARIO
-
 def detalle_usuario(request, usuario_id):
     """
     Vista que muestra los detalles de un usuario específico identificado por su ID.
@@ -307,13 +142,16 @@ def detalle_usuario(request, usuario_id):
     Raises:
         Usuario.DoesNotExist: Si el usuario con el ID proporcionado no existe en la base de datos.
     """
-    usuarios =Usuario.objects.get(id=usuario_id)
+    usuarios =User.objects.get(id=usuario_id)
 
     context={
         'usuarios': usuarios
     }
     return render(request,'Usuarios/detalle_usuario.html', context)
 
+#-----------FIN detalles de vistas------------------
+
+#VISTAS USUARIO
 
 class lista_usuarios(LoginRequiredMixin, ListView):
     """
@@ -329,7 +167,7 @@ class lista_usuarios(LoginRequiredMixin, ListView):
         paginate_by (int): Número de elementos por página para la paginación.
     """
     login_url = '/login/'
-    model = Usuario
+    model = User
     template_name = 'Usuarios/lista_usuarios.html'
     context_object_name = 'usuarios'
     paginate_by = 10
@@ -342,12 +180,12 @@ class lista_usuarios(LoginRequiredMixin, ListView):
             QuerySet: Lista filtrada de usuarios según la consulta de búsqueda.
         """
         query = self.request.GET.get('q','')
-        usuarios = Usuario.objects.filter(
-            Q(apeynombre__icontains=query) |
-            Q(dni__icontains=query)
+        usuarios = User.objects.filter(
+            Q(username__icontains=query) |
+            Q(email__icontains=query)
         )
         return usuarios
-
+    
 class nuevo_usuario(LoginRequiredMixin, CreateView):
     """
     Vista basada en clase para crear un nuevo usuario.
@@ -362,38 +200,16 @@ class nuevo_usuario(LoginRequiredMixin, CreateView):
         success_url (str): URL a la que se redirige después de que se crea un nuevo usuario con éxito.
     """
     login_url = '/login/'
-    model = Usuario
-    form_class = formUsuario
+    model = User
+    form_class = UserRegistrationForm
     template_name = 'Usuarios/form_usuario.html'
     success_url = reverse_lazy('lista_usuarios')
 
-def registrar_usuario(request):
-    if request.method == 'POST':
-        # Crea una instancia del formulario con los datos recibidos
-        form = formUsuario(request.POST)
-        if form.is_valid():
-            # Obtiene los datos del formulario validado
-            username = form.cleaned_data['nombre_usuario']
-            password = form.cleaned_data['contrasenia']
-            email = form.cleaned_data['email']
-
-            # Cifra la contraseña
-            hashed_password = make_password(password)
-
-            # Crea el usuario
-            nuevo_usuario = User.objects.create_user(username=username, password=hashed_password, email=email)
-
-            # Asigna permisos
-            grupo_administradores, creado = Group.objects.get_or_create(name='Administradores')
-            nuevo_usuario.groups.add(grupo_administradores)
-
-            return redirect('main')  # Redirige a la página de inicio después de crear el usuario
-    else:
-        # Si la solicitud no es POST, crea una instancia vacía del formulario
-        form = formUsuario()
-
-    # Renderiza el formulario en el contexto de la página
-    return render(request, 'registrar_usuario.html', {'form': form})
+    def form_valid(self, form):
+            new_user = form.save(commit=False)
+            new_user.set_password(form.cleaned_data['password'])
+            new_user.save()
+            return render(self.request, 'Usuarios/register_done.html', {'new_user': new_user})
 
 class modif_usuario(LoginRequiredMixin, UpdateView):
     """
@@ -409,16 +225,70 @@ class modif_usuario(LoginRequiredMixin, UpdateView):
         success_url (str): URL a la que se redirige después de que se modifica el usuario con éxito.
     """
     login_url = '/login/'
-    model = Usuario
-    form_class = formUsuario
+    model = User
+    form_class = UserRegistrationForm
     template_name = 'Usuarios/form_usuario.html'
     success_url = reverse_lazy('lista_usuarios')
 
 class borrar_usuario(LoginRequiredMixin,DeleteView):
     login_url = '/login/'
-    model = Usuario
+    model = User
     template_name = 'Usuarios/conf_borrar_usuario.html'
     success_url = reverse_lazy('lista_usuarios')
+
+
+
+#VISTAS DE ARTICULO
+
+class lista_articulos(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    model = Articulo
+    template_name = 'Articulo/lista_articulos.html'
+    context_object_name = 'articulos'
+    paginate_by = 10
+
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')
+        articulos = Articulo.objects.filter(
+            Q(descripcion__icontains=query)| # Búsqueda por nombre del clienteNet
+            Q(codigo__icontains=query)             # Búsqueda por DNI del clienteNet
+        )
+
+        return  articulos
+
+class nuevo_articulo(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    model = Articulo
+    form_class = formArticulo
+    template_name = 'Articulo/form_articulo.html'
+    #success_url = reverse_lazy('lista_articulos')
+
+    def form_valid(self, form):
+        self.object = form.save()
+        next_url = self.request.GET.get('next')
+        if self.request.GET.get('from_reserva'):
+            # Redirigir de vuelta al formulario de reserva después de guardar el cliente
+            return HttpResponseRedirect(next_url or reverse('nuevo_reserva'))
+        elif self.request.GET.get('from_lista'):
+            # Redirigir de vuelta a la lista de clientes después de guardar el cliente
+            return HttpResponseRedirect(reverse('lista_articulos'))
+        else:
+            # Si no se especifica ninguna fuente, redirigir al formulario de reserva por defecto
+            return HttpResponseRedirect(next_url or reverse('nuevo_reserva'))
+        
+class modif_articulo(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    model = Articulo
+    form_class = formArticulo
+    template_name = 'Articulo/form_articulo.html'
+    success_url = reverse_lazy('lista_articulos')
+
+class borrar_articulo(LoginRequiredMixin, DeleteView):
+    login_url = '/login/'
+    model = Articulo
+    template_name = 'Articulo/conf_borrar_articulo.html'
+    success_url = reverse_lazy('lista_articulos')
+
     
 
 #VISTAS DE CATEGORIA
@@ -657,6 +527,186 @@ class borrar_clienteNet(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('lista_clientesNet')
   
 #-----PROYECTO RESERVAS--------------------------------------------------------
+
+
+def detalle_cliente(request, cliente_id):
+    """
+    Vista que muestra los detalles de un cliente específico identificado por su ID.
+
+    Recupera y muestra los detalles de un cliente, identificado por el parámetro cliente_id, 
+    incluyendo todos los atributos disponibles del cliente.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        cliente_id (int): El ID del cliente del cual se mostrarán los detalles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'detalle_cliente.html' con el contexto que contiene los detalles del cliente.
+    
+    Raises:
+        Cliente.DoesNotExist: Si el cliente con el ID proporcionado no existe en la base de datos.
+    """
+    cliente = Cliente.objects.get(id=cliente_id) #solo toma el id del cliente         #toma todos los atributos del cliente
+
+    context = {
+        'cliente': cliente
+    }
+    return render(request, 'SinUso/detalle_cliente.html', context)
+
+
+def detalle_encargado(request, encargado_id):
+    """
+    Vista que muestra los detalles de un encargado específico identificado por su ID.
+
+    Recupera y muestra los detalles de un encargado, identificado por el parámetro encargado_id, 
+    incluyendo todos los atributos disponibles del encargado.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        encargado_id (int): El ID del encargado del cual se mostrarán los detalles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'detalle_encargado.html' con el contexto que contiene los detalles del encargado.
+    
+    Raises:
+        Encargado.DoesNotExist: Si el encargado con el ID proporcionado no existe en la base de datos.
+    """
+    encargado = Encargado.objects.get(id=encargado_id)
+
+    context={
+        'encargado': encargado
+    }
+    return render(request,'SinUso/detalle_encargado.html', context)
+
+
+def detalle_complejo(request, complejo_id):
+    """
+    Vista que muestra los detalles de un complejo específico identificado por su ID.
+
+    Recupera y muestra los detalles de un complejo, identificado por el parámetro complejo_id, 
+    incluyendo todos los atributos disponibles del complejo.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        complejo_id (int): El ID del complejo del cual se mostrarán los detalles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'detalle_complejo.html' con el contexto que contiene los detalles del complejo.
+    
+    Raises:
+        Complejo.DoesNotExist: Si el complejo con el ID proporcionado no existe en la base de datos.
+    """
+    complejo = Complejo.objects.get(id=complejo_id)
+
+    context = {
+        'complejo': complejo
+    }
+    return render(request, 'SinUso/detalle_complejo.html', context)
+
+
+def detalle_cabania(request, cabania_id):
+    """
+    Vista que muestra los detalles de una cabaña específica identificada por su ID.
+
+    Recupera y muestra los detalles de una cabaña, identificada por el parámetro cabania_id, 
+    incluyendo todos los atributos disponibles de la cabaña.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        cabania_id (int): El ID de la cabaña de la cual se mostrarán los detalles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'detalle_cabania.html' con el contexto que contiene los detalles de la cabaña.
+    
+    Raises:
+        Cabania.DoesNotExist: Si la cabaña con el ID proporcionado no existe en la base de datos.
+    """
+    cabania = Cabania.objects.get(id=cabania_id)
+
+    context = {
+        'cabania': cabania
+    }
+    return render(request, 'SinUso/detalle_cabania.html', context)
+
+def detalle_reserva(request, reserva_id):
+    """
+    Vista que muestra los detalles de una reserva específica identificada por su ID.
+
+    Recupera y muestra los detalles de una reserva, identificada por el parámetro reserva_id, 
+    incluyendo el cálculo del precio total de la reserva, considerando el precio de la cabaña y servicios asociados.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        reserva_id (int): El ID de la reserva de la cual se mostrarán los detalles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'detalle_reserva.html' con el contexto que contiene los detalles de la reserva.
+    
+    Raises:
+        Reserva.DoesNotExist: Si la reserva con el ID proporcionado no existe en la base de datos.
+    """
+
+    #obtener la reservas especifica por su ID
+    reserva = Reserva.objects.get(id=reserva_id)
+
+    #calculo de detalles de la reserva
+    cabania = reserva.cabania.precio
+    entrada = reserva.diaEntrada #dia entrada
+    salida = reserva.diaSalida  #dia salida
+    cantidad_dias = (salida - entrada).days #calculo de la diferencia entre dia de entrada y salida
+    total_cabania = cabania * cantidad_dias #calculo entre el precio de la cabaña y la cantidad de dias
+    total_servicios = 0 #calculo sobre el total de servicios
+    reserva_servicios = ReservaServicio.objects.filter(reserva=reserva)
+
+    # Iterar sobre cada formulario en el formset
+    for reserva_servicio in reserva_servicios:
+        servicio = reserva_servicio.servicio
+        total_servicios += servicio.precio
+
+    total_servicios = total_servicios * cantidad_dias
+
+    total_reserva = total_cabania + total_servicios #calculo sobre el total de la reserva
+    print(total_servicios, total_reserva)
+
+    context = {
+            'reserva': reserva,
+            'cabania': cabania,
+            'cantidad_dias': cantidad_dias,
+            'total_cabania': total_cabania,
+            'total_servicios': total_servicios,
+            'total_reserva': total_reserva,
+            'total_servicios': total_servicios
+        }
+
+    return render(request, 'SinUso/detalle_reserva.html', context)
+
+def obtener_cabanias(request, complejo_id):
+    cabanias = Cabania.objects.filter(complejo_id=complejo_id).values_list('id','nombre')
+    cabanias_dict = dict(cabanias)
+    return JsonResponse(cabanias_dict)
+
+def detalle_servicio(request, servicio_id):
+    """
+    Vista que muestra los detalles de un servicio específico identificado por su ID.
+
+    Recupera y muestra los detalles de un servicio, identificado por el parámetro servicio_id.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP recibida.
+        servicio_id (int): El ID del servicio del cual se mostrarán los detalles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'detalle_servicio.html' con el contexto que contiene los detalles del servicio.
+    
+    Raises:
+        Servicio.DoesNotExist: Si el servicio con el ID proporcionado no existe en la base de datos.
+    """
+    servicio = Servicio.objects.get(id=servicio_id)
+
+    context = {
+        'servicio': servicio
+    } 
+    return render(request, 'detalle_servicio.html', context)
 
 #VISTAS ENCARGADO
 
@@ -1259,21 +1309,7 @@ class DetalleReservaServicio(LoginRequiredMixin, ListView):
         queryset = ReservaServicio.objects.filter(reserva_id=reserva_id)
         return queryset 
 '''
-    
-def Logout(request):
-    """
-    Función para cerrar la sesión de un usuario.
 
-    Realiza el proceso de cierre de sesión en Django y redirige al usuario a la página de inicio.
-
-    Args:
-        request (HttpRequest): Objeto de solicitud HTTP.
-
-    Returns:
-        HttpResponseRedirect: Redirige al usuario a la página de inicio.
-    """
-    logout(request)
-    return redirect('/')
 
 from django.http import JsonResponse
 

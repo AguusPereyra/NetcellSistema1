@@ -2,18 +2,28 @@
 from django.urls import path
 from . import views
 from django.contrib.auth.views import LoginView
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.main, name='main'),
 
+
 #-----PROYECTO NETCELL--------------------------------------------------------
+    path('articulos/', views.lista_articulos.as_view(), name='lista_articulos'),
+    path('articulos/<int:articulo_id>/', views.detalle_articulo, name='detalle_articulo'),
+    path('articulos/articuloNuevo/', views.nuevo_articulo.as_view(), name='nuevo_articulo'),
+    path('articulos/articuloModif/<int:pk>/', views.modif_articulo.as_view(), name='modif_articulo'),
+    path('articulos/articuloBorrar/<int:pk>/', views.borrar_articulo.as_view(), name='borrar_articulo'),
+
+#------#Usuarios-----
+    path('password-change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
+    path('password-change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
     path('usuarios/', views.lista_usuarios.as_view(), name='lista_usuarios'),
     path('usuarios/<int:usuario_id>/', views.detalle_usuario, name='detalle_usuario'),
-    #path('usuarios/', views.registrar_usuario, name='registrar_usuario'),
     path('usuarios/usuarioNuevo', views.nuevo_usuario.as_view(), name='nuevo_usuario'),
     path('usuarios/usuarioModif/<int:pk>/', views.modif_usuario.as_view(), name='modif_usuario'),
     path('usuarios/usuarioBorrar/<int:pk>/', views.borrar_usuario.as_view(), name='borrar_usuario'),
-    
+
 
     path('clientesNet/', views.lista_clientesNet.as_view(), name='lista_clientesNet'),
     path('clientesNet/<int:clienteNet_id>/', views.detalle_clienteNet, name='detalle_clienteNet'),

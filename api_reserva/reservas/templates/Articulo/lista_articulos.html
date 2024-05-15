@@ -54,6 +54,10 @@
             }
         </style>
     </head>
+
+
+
+
     <div style="padding-right: calc(var(--bs-gutter-x)* 8.5)" class=" col d-flex justify-content-end align-items-end mb-3">
 
         <form style="margin-left: 0" method="GET">
@@ -68,50 +72,37 @@
                 </div>
         </form>  
 
-        
-
         <div class="d-flex justify-content-end align-items-end">
-            <a class="botonPrimario" id="modal-btn">Mov. de Stock</a>            
+            <a type="button" class="botonPrimario" id="modal-btn">Mov. de Stock</a>            
         </div>
+
+        <!-- SE AGREGA MODAL PARA EL MOVIMIENTO DE STOCK -->
 
         <div id="myModal" class="modal">
             <div style="top: 34%; y left: 50%;transform: translate(11%, -67%); position: fixed" class="modal-content">
                 <span class="close">&times;</span>
                 <h1>Movimiento de Stock</h1>
                     <div>
-                        <form style="margin-left: 0; display: inline-block;" method="GET">
-                            <div class="input-group">
-                                <select id="search1" value="{{ query }}" name="q">
-                                <option value="" selected disabled>--</option>
-                                {% for ubicacion in ubicaciones %}
-                                    <option value="{{ ubicacion }}">{{ ubicacion }}</option>
-                                {% endfor %}
-                                </select>
+
+                        <!--SE AGREGAN 1 DESPLEGABLE -->
+
+                        <form id="filtroFormSearch">
+                            <div style="margin-left: 0; display: inline-block;" method="GET">
+                                <div class="input-group">
+                                    <select id="filtro1" value="{{ query }}" name="q">
+                                    <option value="" selected disabled>--</option>
+                                    {% for ubicacion in ubicaciones %}
+                                        <option value="{{ ubicacion }}">{{ ubicacion }}</option>
+                                    {% endfor %}
+                                    </select>
+                                    <button id="filtrarTablaBtn" type="submit" class="btn btn-primary">Filtrar Tabla</button>
+                                </div>
                             </div>
-                        </form>  
-                        <form style="margin-left: 10px; display: inline-block;" method="GET">
-                            <div class="input-group">
-                                <select id="search1" value="{{ query }}" name="q">
-                                <option value="" selected disabled>--</option>
-                                {% for ubicacion in ubicaciones %}
-                                    <option value="{{ ubicacion }}">{{ ubicacion }}</option>
-                                {% endfor %}
-                                </select>
-                            </div>
-                        </form>    
+                        </form>       
                     </div>
+                        <!--AGREEGAMOS TABLA AL MODAL, ES LA MISMA QUE SE VE EN lista_articulos -->
 
-                    <div class=" col d-flex justify-content-end align-items-end mb-3">
-
-                        <form method="GET">
-                            <div class="input-group">
-                                <input type="text" id="search" class="form-control inputApagado" name="q" value="{{ query }}" placeholder="Buscar Articulo...">
-                                <button class="lupa" type="submit"><span class="material-symbols-outlined">search</span></button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <table class="table table-striped table-hover" id="results" data-bs-theme="light">
+                    <table class="table table-striped table-hover" id="miTabla" data-bs-theme="light">
                         <thead>
                             <tr>
                                 <th>Código</th>
@@ -121,15 +112,15 @@
                             </tr>       
                         </thead>
                         <tbody>
-                            {% for articulo in articulo %} 
+                            {% for articulo_modal in articulo %} 
                             <tr class="filas">
-                                <td>{{ articulo.codigo }}</a></td>
-                                <td>{{ articulo.descripcion }}</td>
-                                <td>{{ articulo.precioVenta }}</td>
-                                <td>{{ articulo.stock }}</td>
+                                <td>{{ articulo_modal.codigo }}</a></td>
+                                <td>{{ articulo_modal.descripcion }}</td>
+                                <td>{{ articulo_modal.precioVenta }}</td>
+                                <td>{{ articulo_modal.stock }}</td>
                 
-                                <td class="d-flex justify-content-end align-items-end"><a class="botonTerciario" href="/articulos/articuloModif/{{ articulo.id }}"> Modificar</td>
-                                <td><a class="botonSecundario" href="/articulos/articuloBorrar/{{ articulo.id }}">Borrar</a></td>
+                                <td class="d-flex justify-content-end align-items-end"><a class="botonTerciario" href="/articulos/articuloModif/{{ articulo_modal.id }}"> Modificar</td>
+                                <td><a class="botonSecundario" href="/articulos/articuloBorrar/{{ articulo_modal.id }}">Borrar</a></td>
                             {% endfor %} 
                         </tbody>
                     </table>
@@ -160,29 +151,60 @@
             
         </div>
 
-        <script>
-            // Obtener el botón y el modal
+            <!-- ACA SE AGREGO FUNCIONES DEL MODAL COMO ABRIR Y CERRAR UN MODAL. -->
+
+        <script>            
+            
+            // Obtener referencias a los elementos HTML
             var modalBtn = document.getElementById("modal-btn");
-            var modal = document.getElementById("myModal");
-        
+            var modal = document.getElementById("myModal");            
+            var mostrarFila = true;
+
+            var filtro1 = document.getElementById("filtro1");
+            var tabla = document.getElementById("miTabla");
+            var filtrarTablaBtn = document.getElementById("filtrarTablaBtn");
+
+            // Agregar eventos de cambio para los selectores y el campo de búsqueda
+            filtro1.addEventListener("change", filtrarTabla);
+            document.getElementById("filtroFormSearch").addEventListener("submit", function(event) {
+                event.preventDefault(); // Evitar que se envíe el formulario
+                filtrarTabla();
+                
+            filtrarTablaBtn.addEventListener("click", function(event) {
+                event.preventDefault();
+                event.stopPropagation(); // Evitar que el evento se propague
+                filtrarTabla();
+            });
+
+            function filtrarTabla(event) {
+                var filtro1Value = filtro1.value.toLowerCase();
+                var filas = tabla.querySelectorAll("tbody tr.filas");
+                //var numFilas = filas.length;
+            
+                filas.forEach (function(fila) {
+                    var celdaFiltro1 = fila.querySelector("td:first-child");
+            
+                    // Aplicar filtros
+                    if (filtro1Value === "" || celdaFiltro1.textContent.toLowerCase().includes(filtro1Value)) {
+                        fila.style.display = "";
+                    } else {
+                        fila.style.display = "none";
+                    }
+            
+                    // Mostrar u ocultar la fila según los criterios de filtrado
+                    fila.style.display = mostrarFila ? "" : "none";
+                });
+            }
+
             // Cuando se hace clic en el botón, mostrar el modal
             modalBtn.onclick = function() {
                 modal.style.display = "block";
             }
-        
             // Cuando se hace clic en <span> (x), cerrar el modal
             modal.getElementsByClassName("close")[0].onclick = function() {
                 modal.style.display = "none";
             }
-        
-            // Cuando el usuario haga clic en cualquier parte fuera del modal, cerrarlo
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = "none";
-                }
-            }
         </script>
-        
         
     </div>
 

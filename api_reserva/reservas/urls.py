@@ -42,6 +42,12 @@ urlpatterns = [
     path('categoria/categoriaNuevo/', views.nuevo_categoria.as_view(), name='nuevo_categoria'),
     path('categoria/categoriaModif/<int:pk>/', views.modif_categoria.as_view(), name='modif_categoria'),
     path('categoria/categoriaBorrar/<int:pk>/', views.borrar_categoria.as_view(), name='borrar_categoria'),
+    
+    path('articulos/', views.lista_articulos.as_view(), name='lista_articulos'),
+    path('articulos/<int:articulo_id>/', views.detalle_articulo, name='detalle_articulo'),
+    path('articulos/articuloNuevo/', views.nuevo_articulo.as_view(), name='nuevo_articulo'),
+    path('articulos/articuloModif/<int:pk>/', views.modif_articulo.as_view(), name='modif_articulo'),
+    path('articulos/articuloBorrar/<int:pk>/', views.borrar_articulo.as_view(), name='borrar_articulo'),
 
 #-----PROYECTO RESERVAS--------------------------------------------------------
 

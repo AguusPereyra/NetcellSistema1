@@ -18,6 +18,7 @@ from django.forms import inlineformset_factory
 from django.contrib.auth.models import User, Group 
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.views import logout_then_login
+from urllib.parse import unquote
 
 # Create your views here.
 
@@ -41,7 +42,7 @@ def main(request):
     categoria = Categoria.objects.all()
     proveedores = Proveedor.objects.all()
     usuarios = User.objects.all()
-    articulo = Articulo.objects.all()
+    articulos = Articulo.objects.all()
 
     context = {'reservas': reservas,
                'clientes': clientes,
@@ -54,7 +55,7 @@ def main(request):
                'categoria': categoria,
                'proveedores': proveedores,
                'usuarios': usuarios,
-               'articulo': articulo
+               'articulos': articulos
                }
     
     return render(request, 'main.html', context)
@@ -77,78 +78,28 @@ def Logout(request):
 #-----PROYECTO NETCELL--------------------------------------------------------
 #-----INICIO Detalles de vistas-------------------------------------
 
-def detalle_articulo(request, articulo_id):
-    """
-    Vista que muestra los detalles de un cliente específico identificado por su ID.
-
-    Recupera y muestra los detalles de un cliente, identificado por el parámetro cliente_id, 
-    incluyendo todos los atributos disponibles del cliente.
-
-    Args:
-        request (HttpRequest): La solicitud HTTP recibida.
-        cliente_id (int): El ID del cliente del cual se mostrarán los detalles.
-
-    Returns:
-        HttpResponse: Renderiza la plantilla 'detalle_cliente.html' con el contexto que contiene los detalles del cliente.
-    
-    Raises:
-        Cliente.DoesNotExist: Si el cliente con el ID proporcionado no existe en la base de datos.
-    """
-    articulo = Articulo.objects.get(id=articulo_id) #solo toma el id de la categoria
-
-    context = {
-        'articulo': articulo
-    }
-    return render(request, 'Articulo/detalle_articulo.html', context)
-
-
 def detalle_proveedor(request, proveedor_id):
-    """
-    Vista que muestra los detalles de un cliente específico identificado por su ID.
-
-    Recupera y muestra los detalles de un cliente, identificado por el parámetro cliente_id, 
-    incluyendo todos los atributos disponibles del cliente.
-
-    Args:
-        request (HttpRequest): La solicitud HTTP recibida.
-        cliente_id (int): El ID del cliente del cual se mostrarán los detalles.
-
-    Returns:
-        HttpResponse: Renderiza la plantilla 'detalle_cliente.html' con el contexto que contiene los detalles del cliente.
     
-    Raises:
-        Cliente.DoesNotExist: Si el cliente con el ID proporcionado no existe en la base de datos.
-    """
-    proveedor = Proveedor.objects.get(id=proveedor_id) #solo toma el id de la categoria
+    #solo toma el id del proveedor
+    proveedor = Proveedor.objects.get(id=proveedor_id) 
 
     context = {
         'proveedor': proveedor
     }
     return render(request, 'Proveedor/detalle_proveedor.html', context)
 
+
+
 def detalle_categoria(request, categoria_id):
-    """
-    Vista que muestra los detalles de un cliente específico identificado por su ID.
-
-    Recupera y muestra los detalles de un cliente, identificado por el parámetro cliente_id, 
-    incluyendo todos los atributos disponibles del cliente.
-
-    Args:
-        request (HttpRequest): La solicitud HTTP recibida.
-        cliente_id (int): El ID del cliente del cual se mostrarán los detalles.
-
-    Returns:
-        HttpResponse: Renderiza la plantilla 'detalle_cliente.html' con el contexto que contiene los detalles del cliente.
     
-    Raises:
-        Cliente.DoesNotExist: Si el cliente con el ID proporcionado no existe en la base de datos.
-    """
-    categoria = Categoria.objects.get(id=categoria_id) #solo toma el id de la categoria
+    #solo toma el id de la categoria
+    categoria = Categoria.objects.get(id=categoria_id) 
 
     context = {
         'categoria': categoria
     }
     return render(request, 'Categoria/detalle_categoria.html', context)
+
 
 def detalle_clienteNet(request, clienteNet_id):
     """
@@ -338,6 +289,7 @@ class borrar_articulo(LoginRequiredMixin, DeleteView):
     template_name = 'Articulo/conf_borrar_articulo.html'
     success_url = reverse_lazy('lista_articulos')
 
+    
 
 #VISTAS DE CATEGORIA
 
@@ -440,6 +392,86 @@ class borrar_proveedor(LoginRequiredMixin, DeleteView):
     model = Proveedor
     template_name = 'Proveedores/conf_borrar_proveedores.html'
     success_url = reverse_lazy('lista_proveedores')
+
+
+#VISTAS DE ARTICULO
+
+def detalle_articulo(request, articulo_id):    
+    #solo toma el id del articulo
+    articulo = Articulo.objects.get(id=articulo_id)  
+
+    context = {
+        'articulo': articulo
+    }
+    return render(request, 'Articulo/detalle_articulo.html', context)
+
+class lista_articulos(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    model = Articulo
+    template_name = 'Articulo/lista_articulos.html'
+    context_object_name = 'articulo'
+    paginate_by = 10
+
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')
+        articulos = Articulo.objects.filter(
+            Q(codigo__icontains=query)|
+            Q(descripcion__icontains=query)|
+            Q(ubicacion__icontains=query)
+        )
+
+        return  articulos
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+    
+    # Obtener la ubicación seleccionada del parámetro GET
+        ubicacion_seleccionada_encoded = self.request.GET.get('q', '')
+        ubicacion_seleccionada = unquote(ubicacion_seleccionada_encoded)
+        print("Ubicación seleccionada:", ubicacion_seleccionada)
+
+    # Obtener las ubicaciones únicas para poblar el desplegable
+        context['ubicaciones'] = Articulo.objects.values_list('ubicacion', flat=True).distinct()
+
+    # Filtrar los artículos basados en la ubicación seleccionada
+        if ubicacion_seleccionada:
+            context['articulos'] = Articulo.objects.filter(ubicacion__icontains=ubicacion_seleccionada)
+        else:
+        # Si no se selecciona una ubicación, mostrar todos los artículos
+            context['articulos'] = Articulo.objects.all()
+
+        return context
+
+
+class nuevo_articulo(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    model = Articulo
+    form_class = formArticulo
+    template_name = 'Articulo/form_articulo.html'
+
+    def form_valid(self, form):
+        self.object = form.save()
+        next_url = self.request.GET.get('next')
+        if self.request.GET.get('from_reserva'):
+            
+            return HttpResponseRedirect(next_url or reverse('nuevo_reserva'))
+        elif self.request.GET.get('from_lista'):            
+            return HttpResponseRedirect(reverse('lista_articulos'))
+        else:            
+            return HttpResponseRedirect(next_url or reverse('nuevo_reserva'))
+        
+class modif_articulo(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    model = Articulo
+    form_class = formArticulo
+    template_name = 'Articulo/form_articulo.html'
+    success_url = reverse_lazy('lista_articulos')
+
+class borrar_articulo(LoginRequiredMixin, DeleteView):
+    login_url = '/login/'
+    model = Articulo
+    template_name = 'Articulo/conf_borrar_articulo.html'
+    success_url = reverse_lazy('lista_articulos')
 
 
 #VISTAS DE CLIENTESNET

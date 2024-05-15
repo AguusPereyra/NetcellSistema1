@@ -2,22 +2,23 @@
 
 {% block content %}
 <div class="contenedorDetalle">
-    <div class="detalle">
+    <div style="width: 50%; height: 96vh"  class="detalle">
         <h1>Articulo</h1>
-        <h2>{{ articulo.codigo }}</h2>
-        <p><strong>Descripción: </strong> {{ articulo.descripcion}}</p>
+        <h2>{{ articulo.descripcion }}</h2>
+        <p><strong>Código: </strong> {{ articulo.codigo}}</p>
         <p><strong>Costo: </strong> {{ articulo.costo}}</p>
         <p><strong>Ganancia: </strong> {{ articulo.ganancia}}</p>
         <p><strong>Precio Venta: </strong> {{ articulo.precioVenta}}</p>
         <p><strong>Stock: </strong> {{ articulo.stock}}</p>
         <p><strong>Stock Min.: </strong> {{ articulo.stockMinimo}}</p>
+        <p><strong>Desc.: </strong> {{ articulo.descuento}}</p>
         <p><strong>Categoria: </strong>{{ articulo.categoria }}</p>
         <p><strong>Proveedor: </strong>{{ articulo.proveedor }}</p>
         <p><strong>Ubicación: </strong>{{ articulo.ubicacion }}</p>
         
 
         <div class="contenedorBotones">
-            <a style="margin: 50px" class="botonSecundario" href="{% url 'lista_articulos' %}">Cancelar</a>   
+            <a style="margin: 50px" class="botonSecundario" href="{% url 'lista_articulos' %}">Volver</a>   
         </div>
     </div>
 </div>

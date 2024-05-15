@@ -7,7 +7,7 @@
     <div class="confBorrar">
         <h1>Borrar Usuario</h1>
 
-        <p>¿Esta seguro de borrar este usuario <b>{{ usuario.nombre_usuario}}</b>?</p>
+        <p>¿Esta seguro de borrar este usuario <b>{{ user.first_name}}</b>?</p>
         <form method="post">
             {% csrf_token %}
             <div class="contenedorBotones">

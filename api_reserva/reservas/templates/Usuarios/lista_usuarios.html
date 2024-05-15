@@ -25,25 +25,17 @@
             <tr>
                 <th>Usuario</th>
                 <th>Nombre y Apellido</th>
-                <th>Telefono</th>
                 <th>Email</th>
-                <th>DNI</th>
-                <th>Local</th>
-                <th>Rol</th>
             </tr>       
         </thead>
         <tbody>
-            {% for usuario in usuarios %} 
+            {% for user in usuarios %} 
             <tr class="filas">
-                <td><a href="{% url 'detalle_usuario' usuario.id %}">{{ usuario.nombre_usuario }}</a></td>
-                <td>{{ usuario.apeynombre }}</td>
-                <td>{{ usuario.telefono }}</td>
-                <td>{{ usuario.email}}</td>
-                <td>{{ usuario.dni}}</td>
-                <td>{{ usuario.locales}}</td>
-                <td>{{ usuario.roles}}</td>
-                <td class="d-flex justify-content-end align-items-end"><a class="botonTerciario" href="/usuarios/usuarioModif/{{ usuario.id }}">Modificar</a></td>
-                <td><a class="botonSecundario" href="/usuarios/usuarioBorrar/{{ usuario.id }}">Borrar</a></td>
+                <td><a href="{% url 'detalle_usuario' user.id %}">{{ user.username }}</a></td>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.email}}</td>
+                <td class="d-flex justify-content-end align-items-end"><a class="botonTerciario" href="/usuarios/usuarioModif/{{ user.id }}">Modificar</a></td>
+                <td><a class="botonSecundario" href="/usuarios/usuarioBorrar/{{ user.id }}">Borrar</a></td>
             {% endfor %} 
         </tbody>
     </table>
